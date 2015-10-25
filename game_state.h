@@ -14,14 +14,16 @@ bool operator==(Coordinate point1, Coordinate point2);
 
 typedef std::vector<Coordinate> list_of_points;
 
+enum player{ EMPTY, BLACK, WHITE };
+
 enum is_legal_responses{ LEGAL_MOVE, POINT_NOT_ON_BOARD, POINT_OCCUPIED, KO_POINT, SUICIDE };
 
 class GameState
 {
 private:
-  int board_state[BOARD_SIZE][BOARD_SIZE];
-  int to_play;
-  int other_player;
+  player board_state[BOARD_SIZE][BOARD_SIZE];
+  player to_play;
+  player other_player;
   Coordinate ko;
 
 public:

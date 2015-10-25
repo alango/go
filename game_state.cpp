@@ -15,11 +15,11 @@ GameState::GameState()
 	{
 		for (int col = 0; col < BOARD_SIZE; col++)
 		{
-			board_state[row][col] = 0;
+			board_state[row][col] = EMPTY;
     }
   }
-  to_play = 1;
-  other_player = 2;
+  to_play = BLACK;
+  other_player = WHITE;
   ko.x = -1;
   ko.y = -1;
 }
@@ -52,7 +52,7 @@ bool GameState::point_unoccupied(Coordinate coordinate)
 	{
 	  return false;
 	}
-	if (board_state[coordinate.y][coordinate.x] != 0)
+	if (board_state[coordinate.y][coordinate.x] != EMPTY)
 	{
 		return false;
 	}
@@ -103,7 +103,7 @@ list_of_points GameState::get_adjacent_points(Coordinate coordinate)
 int GameState::liberties_on_group(Coordinate coordinate)
 {
 	list_of_points liberties;
-	int colour = board_state[coordinate.y][coordinate.x];
+	player colour = board_state[coordinate.y][coordinate.x];
 	Coordinate current_stone;
 	list_of_points checked_stones, stones_to_check;
 	stones_to_check.push_back(coordinate);
@@ -139,7 +139,7 @@ int GameState::liberties_on_group(Coordinate coordinate)
 int GameState::remove_captures(Coordinate point)
 {
 	int num_captures = 0; // Needed to check for ko.
-	int colour = board_state[point.y][point.x];
+	player colour = board_state[point.y][point.x];
   Coordinate current_point;
   list_of_points points_to_check;
   points_to_check.push_back(point);
@@ -147,7 +147,7 @@ int GameState::remove_captures(Coordinate point)
 	{
     current_point = points_to_check.back();
     points_to_check.pop_back();
-    board_state[current_point.y][current_point.x] = 0;
+    board_state[current_point.y][current_point.x] = EMPTY;
     num_captures++;
     list_of_points adjacents = get_adjacent_points(current_point);
     for (list_of_points::iterator point = adjacents.begin(); point != adjacents.end(); point++)
@@ -165,7 +165,7 @@ bool GameState::is_suicide(Coordinate move)
 {
 	board_state[move.y][move.x] = to_play;
 	int liberties = liberties_on_group(move);
-	board_state[move.y][move.x] = 0;
+	board_state[move.y][move.x] = EMPTY;
 	if (liberties == 0) { return true; }
 	else { return false; }
 }
@@ -192,7 +192,7 @@ void GameState::play_move(Coordinate move)
 
 	for (list_of_points::iterator group = groups_captured.begin(); group != groups_captured.end(); group++)
 	{
-		if (board_state[group->y][group->x] != 0)
+		if (board_state[group->y][group->x] != EMPTY)
 		{
 			num_captures += remove_captures(*group);
 		}
@@ -203,74 +203,27 @@ void GameState::play_move(Coordinate move)
 		list_of_points adjacent_points = get_adjacent_points(move);
 		for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
 		{
-			if (board_state[point->y][point->x] == 0)
+			if (board_state[point->y][point->x] == EMPTY)
 			{
 				ko = *point;
 			}
 		}
 	}
 	
-	if (to_play == 1)
+	if (to_play == BLACK)
 	{
-		to_play = 2;
-		other_player = 1;
+		to_play = WHITE;
+		other_player = BLACK;
 	}
 	else
 	{
-		to_play = 1;
-		other_player = 2;
+		to_play = BLACK;
+		other_player = WHITE;
 	}
 }
 
 void GameState::human_move()
 {
-/*	Coordinate move;
-	bool capture_made = false;
-	bool legal_move = false;
-	while (!legal_move)
-	{
-		legal_move = true;
-	  move = request_move();
-	  if (!point_on_board(move))
-	  {
-	  	legal_move = false;
-      std::cout << "That is not a point on the board" << std::endl;
-	  }
-	  else if (!point_unoccupied(move))
-	  {
-	  	legal_move = false;
-	  	std::cout << "There is already a stone on that point" << std::endl;
-	  }
-	  // Check ko rule here.
-	  if (move == ko)
-	  {
-	  	legal_move = false;
-	  	std::cout << "Ko rule: You must play elsewhere first" << std::endl;
-	  }
-
-	  // Check for capture. If a capture has been made, then the move is legal.
-	  // If not, then check if the move is suicide.
-	  list_of_points adjacent_points = get_adjacent_points(move);
-	  for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
-	  {
-	  	if (board_state[point->y][point->x] == other_player)
-	  	{
-	  		if (liberties_on_group(*point) == 1)
-	  		{
-	  			capture_made = true;
-	  		}
-	  	}
-	  }
-	  if (capture_made == false)
-	  {
-	  	if (is_suicide(move))
-	  	{
-	  		legal_move = false;
-	  		std::cout << "That move is suicide" << std::endl;
-	  	}
-	  }
-	}*/
-
 	Coordinate move;
 	bool legal_move = false;
 	is_legal_responses is_legal_response;
