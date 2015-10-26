@@ -1,21 +1,15 @@
 #include <iostream>
 #include <vector>
+
+#include "game.h"
 #include "game_state.h"
+#include "player.h"
+#include "human_player.h"
 #include "test.h"
 
 int main()
 {
-	ko_test();
-
-	GameState game;
-
-	game.print();
-
-  while (true)
-  {
-	  game.human_move();
-	  game.print();
-  }
+	Game game;
 	return 0;
 }
 

@@ -29,15 +29,9 @@ private:
 public:
   GameState();
   ~GameState();
-  // Request moves until a legal one is submitted, and then plays it.
-  void human_move();
   // Place stone and update the board.
   void play_move(Coordinate move);
   void print();
-
-private:
-  // Asks the user to input a move.
-  Coordinate request_move();
   // Checks if the coordinate is actually on the board.
   bool point_on_board(Coordinate coordinate);
   // Checks if the point is on the board and is empty.
