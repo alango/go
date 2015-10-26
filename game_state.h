@@ -44,6 +44,8 @@ private:
   bool point_unoccupied(Coordinate coordinate);
   // Returns a list of the adjacent points that are on the board.
   list_of_points get_adjacent_points(Coordinate coordinate);
+  // Returns a list of the diagonal points that are on the board.
+  list_of_points get_diagonal_points(Coordinate coordinate);
   // Returns the number liberties of the group that the point belongs to.
   int liberties_on_group(Coordinate coordinate);
   // Removes all stones from the board that are connected to the specified point.
@@ -52,6 +54,8 @@ private:
   bool is_suicide(Coordinate move);
   // Returns 0 if a move is legal, and the appropriate response code otherwise.
   is_legal_responses is_legal(Coordinate move);
+  // Checks if a point is a true eye or not.
+  bool is_eye(Coordinate point);
 };
 
 #endif

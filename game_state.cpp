@@ -100,6 +100,47 @@ list_of_points GameState::get_adjacent_points(Coordinate coordinate)
   return adjacent_points;
 }
 
+list_of_points GameState::get_diagonal_points(Coordinate coordinate)
+{
+	list_of_points diagonal_points;
+	diagonal_points.reserve(4);
+  Coordinate diagonal_point;
+  
+  // Top left
+  diagonal_point.x = coordinate.x - 1;
+  diagonal_point.y = coordinate.y - 1;
+  if (point_on_board(diagonal_point))
+  {
+  	diagonal_points.push_back(diagonal_point);
+  }
+
+  // Top right
+  diagonal_point.x = coordinate.x + 1;
+  diagonal_point.y = coordinate.y - 1;
+  if (point_on_board(diagonal_point))
+  {
+  	diagonal_points.push_back(diagonal_point);
+  }
+  
+  // Bottom left
+  diagonal_point.x = coordinate.x - 1;
+  diagonal_point.y = coordinate.y + 1;
+  if (point_on_board(diagonal_point))
+  {
+  	diagonal_points.push_back(diagonal_point);
+  }
+
+  // Bottom right
+  diagonal_point.x = coordinate.x + 1;
+  diagonal_point.y = coordinate.y + 1;
+  if (point_on_board(diagonal_point))
+  {
+  	diagonal_points.push_back(diagonal_point);
+  }
+
+  return diagonal_points;
+}
+
 int GameState::liberties_on_group(Coordinate coordinate)
 {
 	list_of_points liberties;
@@ -241,7 +282,7 @@ void GameState::human_move()
 		}
 		else if (is_legal_response == POINT_OCCUPIED)
 		{
-			std::cout << "There is alread a stone on that point" << std::endl;
+			std::cout << "There is already a stone on that point" << std::endl;
 		}
 		else if (is_legal_response == KO_POINT)
 		{
@@ -293,6 +334,53 @@ is_legal_responses GameState::is_legal(Coordinate move)
   	}
   }
   return LEGAL_MOVE;
+}
+
+bool GameState::is_eye(Coordinate point)
+{
+	if (!point_unoccupied(point))
+	{
+		return false;
+	}
+	player colour = board_state[point.y][point.x];
+	list_of_points adjacent_points = get_adjacent_points(point);
+	for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
+	{
+		if (board_state[adj->y][adj->x] != colour)
+		{
+			return false;
+		}
+	}
+
+	int diagonals_occupied = 0;
+	list_of_points diagonal_points = get_diagonal_points(point);
+	for (list_of_points::iterator diag = diagonal_points.begin(); diag != diagonal_points.end(); diag++)
+	{
+		if (board_state[diag->y][diag->x] == colour)
+		{
+			diagonals_occupied++;
+		}
+	}
+
+	if (diagonal_points.size() == 4)
+	// If the point is not on the edge of the board, then at least 3 out of the 4
+	// diagonal points must be occupied.
+	{
+		if (diagonals_occupied >= 3) { return true; }
+		else { return false; }
+	}
+	else if (diagonal_points.size() == 3)
+	// If the point is on the edge of the board, then both diagonal points must be occupied.
+	{
+		if (diagonals_occupied == 2) { return true; }
+		else { return false; }
+	}
+	else
+	// If the point is on the corner of the board, then the diagonal point must be occupied.
+	{
+		if (diagonals_occupied == 1) { return true; }
+		else { return false; }
+	}
 }
 
 void GameState::print()
