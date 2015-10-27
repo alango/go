@@ -1,5 +1,7 @@
 #include <iostream>
 #include <algorithm>
+#include <stdlib.h>
+#include <time.h>
 #include "game_state.h"
 
 bool operator==(Coordinate point1, Coordinate point2)
@@ -300,14 +302,30 @@ bool GameState::is_eye(Coordinate point)
 		return false;
 	}
 	list_of_points adjacent_points = get_adjacent_points(point);
-	player colour = board_state[adjacent_points.front().y][adjacent_points.front().x];
+	player colour = EMPTY;
+	for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
+	{
+		if (colour == EMPTY)
+		{
+			if (board_state[adj->y][adj->x] != EMPTY)
+			{
+				colour = board_state[adj->y][adj->x];
+			}
+		}
+	}
+	
+	// No adjacent stones.
+	if (colour == EMPTY) { return false; }
+	
 	for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
 	{
 		if (board_state[adj->y][adj->x] != colour)
 		{
+			// Adjacent points empty or wrong colour.
 			return false;
 		}
 	}
+
 
 	int diagonals_occupied = 0;
 	list_of_points diagonal_points = get_diagonal_points(point);
@@ -338,6 +356,24 @@ bool GameState::is_eye(Coordinate point)
 		if (diagonals_occupied == 1) { return true; }
 		else { return false; }
 	}
+}
+
+Coordinate GameState::random_move()
+{
+	Coordinate move;
+	bool move_found = false;
+	srand(time(NULL));
+	while (!move_found)
+	{
+		move.x = rand() % (BOARD_SIZE+1);
+		move.y = rand() % (BOARD_SIZE+1);
+		if ((is_legal(move) == LEGAL_MOVE) && !is_eye(move))
+		{
+			std::cout << "Found one" << std::endl;
+			move_found = true;
+		}
+	}
+	return move;
 }
 
 void GameState::print()

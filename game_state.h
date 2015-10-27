@@ -50,6 +50,8 @@ public:
   is_legal_responses is_legal(Coordinate move);
   // Checks if a point is a true eye or not.
   bool is_eye(Coordinate point);
+  // Returns a random legal move that won't fill a true eye.
+  Coordinate random_move();
 };
 
 #endif
