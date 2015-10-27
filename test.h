@@ -1,6 +1,7 @@
 #ifndef TEST_H
 #define TEST_H
 
-int ko_test();
+void ko_test();
+void eye_test();
 
 #endif

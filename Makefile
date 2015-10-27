@@ -2,7 +2,7 @@ CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG)
 LFLAGS = -Wall $(DEBUG)
-SOURCES = game_state.cpp game.cpp human_player.cpp main.cpp
+SOURCES = game_state.cpp game.cpp human_player.cpp test.cpp main.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = go
 

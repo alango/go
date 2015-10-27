@@ -299,8 +299,8 @@ bool GameState::is_eye(Coordinate point)
 	{
 		return false;
 	}
-	player colour = board_state[point.y][point.x];
 	list_of_points adjacent_points = get_adjacent_points(point);
+	player colour = board_state[adjacent_points.front().y][adjacent_points.front().x];
 	for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
 	{
 		if (board_state[adj->y][adj->x] != colour)
@@ -326,7 +326,7 @@ bool GameState::is_eye(Coordinate point)
 		if (diagonals_occupied >= 3) { return true; }
 		else { return false; }
 	}
-	else if (diagonal_points.size() == 3)
+	else if (diagonal_points.size() == 2)
 	// If the point is on the edge of the board, then both diagonal points must be occupied.
 	{
 		if (diagonals_occupied == 2) { return true; }
