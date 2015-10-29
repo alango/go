@@ -2,6 +2,7 @@
 
 RandomPlayer::RandomPlayer()
 {
+	srand(time(NULL));
 	Coordinate move;
 	for (int y = 0; y < BOARD_SIZE; y++)
 	{
@@ -22,7 +23,6 @@ Coordinate RandomPlayer::get_move(GameState game_state)
 	Coordinate move;
 	bool move_found = false;
 	int move_index;
-	srand(time(NULL));
 	while (!move_found && !possible_moves_this_turn.empty())
 	{
 		move_found = true;
