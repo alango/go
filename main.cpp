@@ -9,9 +9,9 @@
 
 int main()
 {
-	ko_test();
-	eye_test();
-	Game game;
-	return 0;
+  ko_test();
+  eye_test();
+  Game game;
+  return 0;
 }
 

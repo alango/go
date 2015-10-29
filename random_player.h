@@ -6,12 +6,12 @@
 class RandomPlayer: public Player
 {
 private:
-	list_of_points possible_moves;
-	list_of_points possible_moves_this_turn;
+  list_of_points possible_moves;
+  list_of_points possible_moves_this_turn;
 public:
-	RandomPlayer();
-	~RandomPlayer();
-	Coordinate get_move(GameState game_state);
+  RandomPlayer();
+  ~RandomPlayer();
+  Coordinate get_move(GameState game_state);
 };
 
 #endif

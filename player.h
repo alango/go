@@ -6,7 +6,7 @@
 class Player
 {
 public:
-	virtual Coordinate get_move(GameState game_state) = 0;
+  virtual Coordinate get_move(GameState game_state) = 0;
 };
 
 #endif

@@ -6,9 +6,9 @@
 class HumanPlayer: public Player
 {
 public:
-	Coordinate get_move(GameState game_state);
+  Coordinate get_move(GameState game_state);
 private:
-	Coordinate request_move();
+  Coordinate request_move();
 };
 
 #endif
