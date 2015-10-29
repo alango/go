@@ -185,7 +185,7 @@ int GameState::remove_captures(Coordinate point)
     list_of_points adjacents = get_adjacent_points(current_point);
     for (list_of_points::iterator point = adjacents.begin(); point != adjacents.end(); point++)
     {
-    	if (board_state[point->x][point->y] == colour)
+    	if (board_state[point->y][point->x] == colour)
     	{
     		points_to_check.push_back(*point);
     	}
@@ -302,6 +302,7 @@ bool GameState::is_eye(Coordinate point)
 		return false;
 	}
 	list_of_points adjacent_points = get_adjacent_points(point);
+	// Determine whose eye the point potentially belongs to.
 	player colour = EMPTY;
 	for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
 	{
@@ -358,7 +359,7 @@ bool GameState::is_eye(Coordinate point)
 	}
 }
 
-Coordinate GameState::random_move()
+/*Coordinate GameState::random_move()
 {
 	Coordinate move;
 	bool move_found = false;
@@ -369,15 +370,65 @@ Coordinate GameState::random_move()
 		move.y = rand() % (BOARD_SIZE+1);
 		if ((is_legal(move) == LEGAL_MOVE) && !is_eye(move))
 		{
-			std::cout << "Found one" << std::endl;
 			move_found = true;
 		}
 	}
 	return move;
+}*/
+
+bool GameState::game_finished()
+{
+	Coordinate point;
+	for (int y = 0; y < BOARD_SIZE; y++)
+	{
+		for (int x = 0; x < BOARD_SIZE; x++)
+		{
+			if (board_state[y][x] == EMPTY)
+			{
+				point.x = x;
+				point.y = y;
+				if (!is_eye(point)) { return false; }
+			}
+    }
+  }
+  return true;
+}
+
+int GameState::score_game()
+{
+	Coordinate coordinate;
+	int black_score = 0;
+	int white_score = 0;
+	for (int y = 0; y < BOARD_SIZE; y++)
+	{
+		for (int x = 0; x < BOARD_SIZE; x++)
+		{
+			if (board_state[y][x] == BLACK) { black_score++; }
+			else if (board_state[y][x] == WHITE) { white_score++; }
+			else
+			{
+				coordinate.x = x;
+				coordinate.y = y;
+				list_of_points adjacent_points = get_adjacent_points(coordinate);
+				if (board_state[adjacent_points.front().y][adjacent_points.front().x] == BLACK)
+				{
+					black_score++;
+				}
+				else
+				{
+					white_score++;
+				}
+			}
+    }
+  }
+  return black_score - white_score;
 }
 
 void GameState::print()
 {
+	std::cout << "To play: " << to_play << std::endl;
+	std::cout << "Ko point: ";
+	ko.print();
 	for (int row = 0; row < BOARD_SIZE; row++)
 	{
 		for (int col = 0; col < BOARD_SIZE; col++)
@@ -386,4 +437,5 @@ void GameState::print()
     }
     std::cout << std::endl;
   }
+  std::cout << std::endl;
 }

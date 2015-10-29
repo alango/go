@@ -1,6 +1,7 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+#include <iostream>
 #include <vector>
 
 #define BOARD_SIZE 9
@@ -8,6 +9,10 @@
 typedef struct
 {
   int x, y;
+  void print()
+  {
+    std::cout << "(" << x << ", " << y << ")" << std::endl;
+  }
 } Coordinate;
 
 bool operator==(Coordinate point1, Coordinate point2);
@@ -20,7 +25,7 @@ enum is_legal_responses{ LEGAL_MOVE, POINT_NOT_ON_BOARD, POINT_OCCUPIED, KO_POIN
 
 class GameState
 {
-private:
+public:
   player board_state[BOARD_SIZE][BOARD_SIZE];
   player to_play;
   player other_player;
@@ -51,7 +56,13 @@ public:
   // Checks if a point is a true eye or not.
   bool is_eye(Coordinate point);
   // Returns a random legal move that won't fill a true eye.
-  Coordinate random_move();
+  // Coordinate random_move();
+  // Checks if a game is finished. A game ends when the only empty points remaining
+  // on the board are true eyes.
+  bool game_finished();
+  // Returns the difference between black and white's scores. Only guaranteed to
+  // work if game_finished returns true.
+  int score_game();
 };
 
 #endif

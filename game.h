@@ -9,12 +9,17 @@ class Game
 {
 private:
 	GameState game_state;
-	RandomPlayer player1;
-	HumanPlayer player2;
+	RandomPlayer black;
+	RandomPlayer white;
+	Coordinate pass;
+	bool first_pass;
+	bool game_over;
+	list_of_points game_record;
 
 public:
 	Game();
 	~Game();
+	void turn();
 };
 
 #endif
