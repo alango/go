@@ -8,57 +8,44 @@ void ko_test()
   GameState game;
   Coordinate move;
 
-  move.x = 4;
-  move.y = 4;
+  move.set(4,4);
   game.play_move(move);
 
-  move.x = 3;
-  move.y = 4;
+  move.set(3,4);
   game.play_move(move);
 
-  move.x = 3;
-  move.y = 3;
+  move.set(3,3);
   game.play_move(move);
 
-  move.x = 2;
-  move.y = 3;
+  move.set(2,3);
   game.play_move(move);
 
-  move.x = 3;
-  move.y = 5;
+  move.set(3,5);
   game.play_move(move);
 
-  move.x = 2;
-  move.y = 5;
+  move.set(2,5);
   game.play_move(move);
 
-  move.x = 8;
-  move.y = 8;
+  move.set(8,8);
   game.play_move(move);
 
-  move.x = 1;
-  move.y = 4;
+  move.set(1,4);
   game.play_move(move);
 
-  move.x = 2;
-  move.y = 4;
+  move.set(2,4);
   game.play_move(move);
 
-  move.x = 3;
-  move.y = 4;
+  move.set(3,4);
   // Shouldn't be able to take the ko.
   assert(game.is_legal(move) == KO_POINT);
 
-  move.x = 8;
-  move.y = 7;
+  move.set(8,7);
   game.play_move(move);
 
-  move.x = 8;
-  move.y = 0;
+  move.set(8,0);
   game.play_move(move);
   
-  move.x = 3;
-  move.y = 4;
+  move.set(3,4);
   // Should now be able to take the ko.
   assert(game.is_legal(move) == LEGAL_MOVE);
 
@@ -70,83 +57,65 @@ void eye_test()
   GameState game;
   Coordinate move;
 
-  move.x = 4;
-  move.y = 4;
+  move.set(4,4);
   game.play_move(move);
 
-  move.x = 1;
-  move.y = 0;
+  move.set(1,0);
   game.play_move(move);
 
-  move.x = 4;
-  move.y = 6;
+  move.set(4,6);
   game.play_move(move);
 
-  move.x = 0;
-  move.y = 1;
+  move.set(0,1);
   game.play_move(move);
   // False eye in the corner.
   assert(game.is_eye(move) == false);
 
-  move.x = 5;
-  move.y = 5;
+  move.set(5,5);
   game.play_move(move);
 
-  move.x = 1;
-  move.y = 1;
+  move.set(1,1);
   game.play_move(move);
   
   // Real eye in the corner.
-  move.x = 0;
-  move.y = 0;
+  move.set(0,0);
   assert(game.is_eye(move) == true);
 
-  move.x = 3;
-  move.y = 5;
+  move.set(3,5);
   game.play_move(move);
 
-  move.x = 2;
-  move.y = 1;
+  move.set(2,1);
   game.play_move(move);
 
-  move.x = 3;
-  move.y = 4;
+  move.set(3,4);
   game.play_move(move);
 
-  move.x = 3;
-  move.y = 0;
+  move.set(3,0);
   game.play_move(move);
   
   // False eye on the side.
-  move.x = 2;
-  move.y = 0;
+  move.set(2,0);
   assert(game.is_eye(move) == false);
 
-  move.x = 5;
-  move.y = 6;
+  move.set(5,6);
   game.play_move(move);
   
   // False eye in the middle.
-  move.x = 4;
-  move.y = 5;
+  move.set(4,5);
   assert(game.is_eye(move) == false);
 
-  move.x = 3;
-  move.y = 1;
+  move.set(3,1);
   game.play_move(move);
   
   // Real eye on the side
-  move.x = 2;
-  move.y = 0;
+  move.set(2,0);
   assert(game.is_eye(move) == true);
 
-  move.x = 5;
-  move.y = 4;
+  move.set(5,4);
   game.play_move(move);
   
   // Real eye in the middle.
-  move.x = 4;
-  move.y = 5;
+  move.set(4,5);
   assert(game.is_eye(move) == true);
 
   std::cout << "Eye test passed" << std::endl;

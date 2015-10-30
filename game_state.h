@@ -6,14 +6,18 @@
 
 #define BOARD_SIZE 9
 
-typedef struct
+class Coordinate
 {
-  int x, y;
-  void print()
-  {
-    std::cout << "(" << x << ", " << y << ")" << std::endl;
-  }
-} Coordinate;
+public:
+  int x;
+  int y;
+
+  Coordinate();
+  Coordinate(int x, int y);
+  ~Coordinate();
+  void set(int x, int y);
+  void print();
+};
 
 bool operator==(Coordinate point1, Coordinate point2);
 

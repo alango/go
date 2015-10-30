@@ -3,8 +3,7 @@
 
 Game::Game()
 {
-  pass.x = -1;
-  pass.y = -1;
+  pass.set(-1,-1);
   game_over = false;
   first_pass = false;
   while (!game_over)

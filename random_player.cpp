@@ -36,8 +36,8 @@ Coordinate RandomPlayer::get_move(GameState game_state)
   }
   if (possible_moves_this_turn.empty())
   {
-    move.x = -1;
-    move.y = -1;
+    // No moves remaining so pass.
+    move.set(-1,-1);
   }
   return move;
 }

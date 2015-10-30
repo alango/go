@@ -11,6 +11,31 @@ bool operator==(Coordinate point1, Coordinate point2)
   return true;
 }
 
+Coordinate::Coordinate()
+{
+  x = -1;
+  y = -1;
+}
+
+Coordinate::Coordinate(int x, int y)
+{
+  this->x = x;
+  this->y = y;
+}
+
+Coordinate::~Coordinate() {}
+
+void Coordinate::set(int x, int y)
+{
+  this->x = x;
+  this->y = y;
+}
+
+void Coordinate::print()
+{
+  std::cout << "(" << x << ", " << y << ")" << std::endl;
+}
+
 GameState::GameState()
 {
   for (int row = 0; row < BOARD_SIZE; row++)
@@ -22,8 +47,7 @@ GameState::GameState()
   }
   to_play = BLACK;
   other_player = WHITE;
-  ko.x = -1;
-  ko.y = -1;
+  ko.set(-1,-1);
 }
 
 GameState::~GameState() {};
@@ -219,8 +243,7 @@ void GameState::play_move(Coordinate move)
   }
 
   board_state[move.y][move.x] = to_play;
-  ko.x = -1;
-  ko.y = -1;
+  ko.set(-1,-1);
   int num_captures = 0; // Needed to check for ko.
 
   for (list_of_points::iterator group = groups_captured.begin(); group != groups_captured.end(); group++)
