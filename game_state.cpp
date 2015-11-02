@@ -74,37 +74,35 @@ bool GameState::point_on_board(Coordinate coordinate)
 
 list_of_points GameState::get_adjacent_points(Coordinate coordinate)
 {
+  int x = coordinate.x;
+  int y = coordinate.y;
   list_of_points adjacent_points;
   adjacent_points.reserve(4);
   Coordinate adjacent_point;
   
   // Left
-  adjacent_point.x = coordinate.x - 1;
-  adjacent_point.y = coordinate.y;
+  adjacent_point.set(x-1, y);
   if (point_on_board(adjacent_point))
   {
     adjacent_points.push_back(adjacent_point);
   }
 
   // Right
-  adjacent_point.x = coordinate.x + 1;
-  adjacent_point.y = coordinate.y;
+  adjacent_point.set(x+1, y);
   if (point_on_board(adjacent_point))
   {
     adjacent_points.push_back(adjacent_point);
   }
   
   // Up
-  adjacent_point.x = coordinate.x;
-  adjacent_point.y = coordinate.y - 1;
+  adjacent_point.set(x, y-1);
   if (point_on_board(adjacent_point))
   {
     adjacent_points.push_back(adjacent_point);
   }
 
   // Down
-  adjacent_point.x = coordinate.x;
-  adjacent_point.y = coordinate.y + 1;
+  adjacent_point.set(x, y+1);
   if (point_on_board(adjacent_point))
   {
     adjacent_points.push_back(adjacent_point);
@@ -115,37 +113,35 @@ list_of_points GameState::get_adjacent_points(Coordinate coordinate)
 
 list_of_points GameState::get_diagonal_points(Coordinate coordinate)
 {
+  int x = coordinate.x;
+  int y = coordinate.y;
   list_of_points diagonal_points;
   diagonal_points.reserve(4);
   Coordinate diagonal_point;
   
   // Top left
-  diagonal_point.x = coordinate.x - 1;
-  diagonal_point.y = coordinate.y - 1;
+  diagonal_point.set(x-1, y-1);
   if (point_on_board(diagonal_point))
   {
     diagonal_points.push_back(diagonal_point);
   }
 
   // Top right
-  diagonal_point.x = coordinate.x + 1;
-  diagonal_point.y = coordinate.y - 1;
+  diagonal_point.set(x+1, y-1);
   if (point_on_board(diagonal_point))
   {
     diagonal_points.push_back(diagonal_point);
   }
   
   // Bottom left
-  diagonal_point.x = coordinate.x - 1;
-  diagonal_point.y = coordinate.y + 1;
+  diagonal_point.set(x-1, y+1);
   if (point_on_board(diagonal_point))
   {
     diagonal_points.push_back(diagonal_point);
   }
 
   // Bottom right
-  diagonal_point.x = coordinate.x + 1;
-  diagonal_point.y = coordinate.y + 1;
+  diagonal_point.set(x+1, y+1);
   if (point_on_board(diagonal_point))
   {
     diagonal_points.push_back(diagonal_point);
