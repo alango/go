@@ -32,7 +32,7 @@ void Game::turn()
   {
     move = white.get_move(game_state);
   }
-  move.print();
+  // move.print();
   if (move == pass)
   {
     // This needs refactoring.

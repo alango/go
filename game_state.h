@@ -44,6 +44,8 @@ public:
   void print();
   // Returns the state of the point on the board.
   player get_point(Coordinate point);
+  // Sets the value of the given point.
+  void set_point(Coordinate point, player colour);
   // Checks if the coordinate is actually on the board.
   bool point_on_board(Coordinate coordinate);
   // Returns a list of the adjacent points that are on the board.

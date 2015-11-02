@@ -57,6 +57,11 @@ player GameState::get_point(Coordinate point)
   return board_state[point.y][point.x];
 }
 
+void GameState::set_point(Coordinate point, player colour)
+{
+  board_state[point.y][point.x] = colour;
+}
+
 bool GameState::point_on_board(Coordinate coordinate)
 {
   if (coordinate.x < 0 || coordinate.x >= BOARD_SIZE ||
@@ -152,7 +157,7 @@ list_of_points GameState::get_diagonal_points(Coordinate coordinate)
 int GameState::liberties_on_group(Coordinate coordinate)
 {
   list_of_points liberties;
-  player colour = board_state[coordinate.y][coordinate.x];
+  player colour = get_point(coordinate);
   Coordinate current_stone;
   list_of_points checked_stones, stones_to_check;
   stones_to_check.push_back(coordinate);
@@ -188,7 +193,7 @@ int GameState::liberties_on_group(Coordinate coordinate)
 int GameState::remove_captures(Coordinate point)
 {
   int num_captures = 0; // Needed to check for ko.
-  player colour = board_state[point.y][point.x];
+  player colour = get_point(point);
   Coordinate current_point;
   list_of_points points_to_check;
   points_to_check.push_back(point);
@@ -196,12 +201,12 @@ int GameState::remove_captures(Coordinate point)
   {
     current_point = points_to_check.back();
     points_to_check.pop_back();
-    board_state[current_point.y][current_point.x] = EMPTY;
+    set_point(current_point, EMPTY);
     num_captures++;
     list_of_points adjacents = get_adjacent_points(current_point);
     for (list_of_points::iterator point = adjacents.begin(); point != adjacents.end(); point++)
     {
-      if (board_state[point->y][point->x] == colour)
+      if (get_point(*point) == colour)
       {
         points_to_check.push_back(*point);
       }
@@ -212,9 +217,9 @@ int GameState::remove_captures(Coordinate point)
 
 bool GameState::is_suicide(Coordinate move)
 {
-  board_state[move.y][move.x] = to_play;
+  set_point(move,to_play);
   int liberties = liberties_on_group(move);
-  board_state[move.y][move.x] = EMPTY;
+  set_point(move, EMPTY);
   if (liberties == 0) { return true; }
   else { return false; }
 }
@@ -225,7 +230,7 @@ void GameState::play_move(Coordinate move)
   list_of_points adjacent_points = get_adjacent_points(move);
   for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
   {
-    if (board_state[point->y][point->x] == other_player)
+    if (get_point(*point) == other_player)
     {
       if (liberties_on_group(*point) == 1)
       {
@@ -234,13 +239,13 @@ void GameState::play_move(Coordinate move)
     }
   }
 
-  board_state[move.y][move.x] = to_play;
+  set_point(move, to_play);
   ko.set(-1,-1);
   int num_captures = 0; // Needed to check for ko.
 
   for (list_of_points::iterator group = groups_captured.begin(); group != groups_captured.end(); group++)
   {
-    if (board_state[group->y][group->x] != EMPTY)
+    if (get_point(*group) != EMPTY)
     {
       num_captures += remove_captures(*group);
     }
@@ -251,7 +256,7 @@ void GameState::play_move(Coordinate move)
     list_of_points adjacent_points = get_adjacent_points(move);
     for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
     {
-      if (board_state[point->y][point->x] == EMPTY)
+      if (get_point(*point) == EMPTY)
       {
         ko = *point;
       }
@@ -292,7 +297,7 @@ is_legal_responses GameState::is_legal(Coordinate move)
   list_of_points adjacent_points = get_adjacent_points(move);
   for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
   {
-    if (board_state[point->y][point->x] == other_player)
+    if (get_point(*point) == other_player)
     {
       if (liberties_on_group(*point) == 1)
       {
@@ -382,9 +387,9 @@ bool GameState::game_finished()
   {
     for (int x = 0; x < BOARD_SIZE; x++)
     {
-      if (board_state[y][x] == EMPTY)
+      point.set(x,y);
+      if (get_point(point) == EMPTY)
       {
-        point.set(x,y);
         if (!is_eye(point, EMPTY)) { return false; }
       }
     }
