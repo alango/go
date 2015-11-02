@@ -40,11 +40,12 @@ public:
   ~GameState();
   // Place stone and update the board.
   void play_move(Coordinate move);
+  // Prints the current state of the game.
   void print();
+  // Returns the state of the point on the board.
+  player get_point(Coordinate point);
   // Checks if the coordinate is actually on the board.
   bool point_on_board(Coordinate coordinate);
-  // Checks if the point is on the board and is empty.
-  bool point_unoccupied(Coordinate coordinate);
   // Returns a list of the adjacent points that are on the board.
   list_of_points get_adjacent_points(Coordinate coordinate);
   // Returns a list of the diagonal points that are on the board.
@@ -57,10 +58,9 @@ public:
   bool is_suicide(Coordinate move);
   // Returns 0 if a move is legal, and the appropriate response code otherwise.
   is_legal_responses is_legal(Coordinate move);
-  // Checks if a point is a true eye or not.
-  bool is_eye(Coordinate point);
-  // Returns a random legal move that won't fill a true eye.
-  // Coordinate random_move();
+  // Checks if a point is a true eye or not for the player of the specified colour.
+  // if the colour is EMPTY, then it checks if the point is an eye for either player.
+  bool is_eye(Coordinate point, player eye_colour);
   // Checks if a game is finished. A game ends when the only empty points remaining
   // on the board are true eyes.
   bool game_finished();

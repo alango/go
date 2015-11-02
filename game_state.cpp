@@ -52,23 +52,15 @@ GameState::GameState()
 
 GameState::~GameState() {};
 
+player GameState::get_point(Coordinate point)
+{
+  return board_state[point.y][point.x];
+}
+
 bool GameState::point_on_board(Coordinate coordinate)
 {
   if (coordinate.x < 0 || coordinate.x >= BOARD_SIZE ||
       coordinate.y < 0 || coordinate.y >= BOARD_SIZE)
-  {
-    return false;
-  }
-  return true;
-}
-
-bool GameState::point_unoccupied(Coordinate coordinate)
-{
-  if (!point_on_board(coordinate))
-  {
-    return false;
-  }
-  if (board_state[coordinate.y][coordinate.x] != EMPTY)
   {
     return false;
   }
@@ -173,14 +165,14 @@ int GameState::liberties_on_group(Coordinate coordinate)
     list_of_points adjacent_points = get_adjacent_points(current_stone);
     for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
     {
-      if (point_unoccupied(*point))
+      if (get_point(*point) == EMPTY)
       {
         if (std::find(liberties.begin(), liberties.end(), *point)==liberties.end())
         {
           liberties.push_back(*point);
         }
       }
-      else if (board_state[point->y][point->x] == colour)
+      else if (get_point(*point) == colour)
       {
         if ((std::find(checked_stones.begin(), checked_stones.end(), *point)==checked_stones.end())
          && (std::find(stones_to_check.begin(), stones_to_check.end(), *point)==stones_to_check.end()))
@@ -285,7 +277,7 @@ is_legal_responses GameState::is_legal(Coordinate move)
   {
     return POINT_NOT_ON_BOARD;
   }
-  else if (!point_unoccupied(move))
+  else if (get_point(move) != EMPTY)
   {
     return POINT_OCCUPIED;
   }
@@ -318,44 +310,45 @@ is_legal_responses GameState::is_legal(Coordinate move)
   return LEGAL_MOVE;
 }
 
-bool GameState::is_eye(Coordinate point)
+bool GameState::is_eye(Coordinate point, player eye_colour)
 {
-  if (!point_unoccupied(point))
+  if (get_point(point) != EMPTY)
   {
     return false;
   }
+  player colour = eye_colour;
   list_of_points adjacent_points = get_adjacent_points(point);
-  // Determine whose eye the point potentially belongs to.
-  player colour = EMPTY;
-  for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
+  if (colour == EMPTY)
+  // No colour specified, so first determine whose eye the point potentially belongs to.
   {
-    if (colour == EMPTY)
+    for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
     {
-      if (board_state[adj->y][adj->x] != EMPTY)
+      if (colour == EMPTY)
       {
-        colour = board_state[adj->y][adj->x];
+        if (get_point(*adj) != EMPTY)
+        {
+          colour = get_point(*adj);
+        }
       }
     }
   }
-  
   // No adjacent stones.
   if (colour == EMPTY) { return false; }
   
   for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
   {
-    if (board_state[adj->y][adj->x] != colour)
+    if (get_point(*adj) != colour)
     {
       // Adjacent points empty or wrong colour.
       return false;
     }
   }
 
-
   int diagonals_occupied = 0;
   list_of_points diagonal_points = get_diagonal_points(point);
   for (list_of_points::iterator diag = diagonal_points.begin(); diag != diagonal_points.end(); diag++)
   {
-    if (board_state[diag->y][diag->x] == colour)
+    if (get_point(*diag) == colour)
     {
       diagonals_occupied++;
     }
@@ -382,23 +375,6 @@ bool GameState::is_eye(Coordinate point)
   }
 }
 
-/*Coordinate GameState::random_move()
-{
-  Coordinate move;
-  bool move_found = false;
-  srand(time(NULL));
-  while (!move_found)
-  {
-    move.x = rand() % (BOARD_SIZE+1);
-    move.y = rand() % (BOARD_SIZE+1);
-    if ((is_legal(move) == LEGAL_MOVE) && !is_eye(move))
-    {
-      move_found = true;
-    }
-  }
-  return move;
-}*/
-
 bool GameState::game_finished()
 {
   Coordinate point;
@@ -408,9 +384,8 @@ bool GameState::game_finished()
     {
       if (board_state[y][x] == EMPTY)
       {
-        point.x = x;
-        point.y = y;
-        if (!is_eye(point)) { return false; }
+        point.set(x,y);
+        if (!is_eye(point, EMPTY)) { return false; }
       }
     }
   }
@@ -426,14 +401,13 @@ int GameState::score_game()
   {
     for (int x = 0; x < BOARD_SIZE; x++)
     {
-      if (board_state[y][x] == BLACK) { black_score++; }
-      else if (board_state[y][x] == WHITE) { white_score++; }
+      coordinate.set(x,y);
+      if (get_point(coordinate) == BLACK) { black_score++; }
+      else if (get_point(coordinate) == WHITE) { white_score++; }
       else
       {
-        coordinate.x = x;
-        coordinate.y = y;
         list_of_points adjacent_points = get_adjacent_points(coordinate);
-        if (board_state[adjacent_points.front().y][adjacent_points.front().x] == BLACK)
+        if (get_point(adjacent_points.front()) == BLACK)
         {
           black_score++;
         }
@@ -451,6 +425,7 @@ int GameState::score_game()
 
 void GameState::print()
 {
+  Coordinate coordinate;
   std::cout << "To play: " << to_play << std::endl;
   std::cout << "Ko point: ";
   ko.print();
@@ -458,7 +433,8 @@ void GameState::print()
   {
     for (int col = 0; col < BOARD_SIZE; col++)
     {
-      std::cout << board_state[row][col];
+      coordinate.set(col,row);
+      std::cout << get_point(coordinate);
     }
     std::cout << std::endl;
   }

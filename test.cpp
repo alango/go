@@ -69,7 +69,7 @@ void eye_test()
   move.set(0,1);
   game.play_move(move);
   // False eye in the corner.
-  assert(game.is_eye(move) == false);
+  assert(game.is_eye(move, EMPTY) == false);
 
   move.set(5,5);
   game.play_move(move);
@@ -79,7 +79,7 @@ void eye_test()
   
   // Real eye in the corner.
   move.set(0,0);
-  assert(game.is_eye(move) == true);
+  assert(game.is_eye(move, EMPTY) == true);
 
   move.set(3,5);
   game.play_move(move);
@@ -95,28 +95,28 @@ void eye_test()
   
   // False eye on the side.
   move.set(2,0);
-  assert(game.is_eye(move) == false);
+  assert(game.is_eye(move, EMPTY) == false);
 
   move.set(5,6);
   game.play_move(move);
   
   // False eye in the middle.
   move.set(4,5);
-  assert(game.is_eye(move) == false);
+  assert(game.is_eye(move, EMPTY) == false);
 
   move.set(3,1);
   game.play_move(move);
   
   // Real eye on the side
   move.set(2,0);
-  assert(game.is_eye(move) == true);
+  assert(game.is_eye(move, EMPTY) == true);
 
   move.set(5,4);
   game.play_move(move);
   
   // Real eye in the middle.
   move.set(4,5);
-  assert(game.is_eye(move) == true);
+  assert(game.is_eye(move, EMPTY) == true);
 
   std::cout << "Eye test passed" << std::endl;
 }

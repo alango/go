@@ -10,6 +10,7 @@ Game::Game()
   {
     turn();
   }
+  game_state.print();
   game_state.score_game();
   for (list_of_points::iterator move = game_record.begin(); move != game_record.end(); move++)
   {
@@ -22,7 +23,7 @@ Game::~Game() {};
 void Game::turn()
 {
   Coordinate move;
-  game_state.print();
+  // game_state.print();
   if (game_state.to_play == BLACK)
   {
     move = black.get_move(game_state);

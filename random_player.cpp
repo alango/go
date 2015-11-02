@@ -6,10 +6,9 @@ RandomPlayer::RandomPlayer()
   Coordinate move;
   for (int y = 0; y < BOARD_SIZE; y++)
   {
-    move.y = y;
     for (int x = 0; x < BOARD_SIZE; x++)
     {
-      move.x = x;
+      move.set(x,y);
       possible_moves.push_back(move);
     }
   }
@@ -28,7 +27,7 @@ Coordinate RandomPlayer::get_move(GameState game_state)
     move_found = true;
     move_index = rand() % (possible_moves_this_turn.size());
     move = possible_moves_this_turn[move_index];
-    if (game_state.is_legal(move) != LEGAL_MOVE || game_state.is_eye(move))
+    if (game_state.is_legal(move) != LEGAL_MOVE || game_state.is_eye(move, game_state.to_play))
     {
       possible_moves_this_turn.erase(possible_moves_this_turn.begin() + move_index);
       move_found = false;
