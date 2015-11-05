@@ -6,7 +6,7 @@
 class MCTSPlayer: public Player
 {
 private:
-  list_of_points possible_moves;
+  MCTSNode* current_node;
 public:
   MCTSPlayer();
   ~MCTSPlayer();
