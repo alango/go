@@ -33,7 +33,8 @@ void Coordinate::set(int x, int y)
 
 void Coordinate::print()
 {
-  std::cout << "(" << x << ", " << y << ")" << std::endl;
+  // Print coordinate numbers from 1-N, not 0-(N-1).
+  std::cout << "(" << x+1 << ", " << y+1 << ")" << std::endl;
 }
 
 GameState::GameState()

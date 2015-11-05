@@ -12,7 +12,6 @@ private:
   RandomPlayer black;
   RandomPlayer white;
   Coordinate pass;
-  bool first_pass;
   bool game_over;
   list_of_points game_record;
 

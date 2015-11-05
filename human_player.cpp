@@ -3,11 +3,12 @@
 
 Coordinate HumanPlayer::request_move()
 {
-  Coordinate coordinate;
+  int x,y;
   std::cout << "Enter x co-ordinate:" << std::endl;
-  std::cin >> coordinate.x;
+  std::cin >> x;
   std::cout << "Enter y co-ordinate:" << std::endl;
-  std::cin >> coordinate.y;
+  std::cin >> y;
+  Coordinate coordinate(x-1, y-1);
   return coordinate;
 }
 

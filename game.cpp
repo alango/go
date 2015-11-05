@@ -5,7 +5,6 @@ Game::Game()
 {
   pass.set(-1,-1);
   game_over = false;
-  first_pass = false;
   while (!game_over)
   {
     turn();
