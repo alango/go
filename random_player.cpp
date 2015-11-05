@@ -18,7 +18,7 @@ RandomPlayer::~RandomPlayer() {};
 
 Coordinate RandomPlayer::get_move(GameState game_state)
 {
-  possible_moves_this_turn = possible_moves;
+  list_of_points possible_moves_this_turn = possible_moves;
   Coordinate move;
   bool move_found = false;
   int move_index;

@@ -34,12 +34,14 @@ public:
   player to_play;
   player other_player;
   Coordinate ko;
+  bool one_pass;
 
 public:
   GameState();
   ~GameState();
-  // Place stone and update the board.
-  void play_move(Coordinate move);
+  // Place stone and update the board. Returns true if the game has ended and false
+  // otherwise.
+  bool play_move(Coordinate move);
   // Prints the current state of the game.
   void print();
   // Returns the state of the point on the board.

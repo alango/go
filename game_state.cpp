@@ -47,6 +47,7 @@ GameState::GameState()
   }
   to_play = BLACK;
   other_player = WHITE;
+  one_pass = false;
   ko.set(-1,-1);
 }
 
@@ -220,45 +221,53 @@ bool GameState::is_suicide(Coordinate move)
   else { return false; }
 }
 
-void GameState::play_move(Coordinate move)
+bool GameState::play_move(Coordinate move)
 {
-  list_of_points groups_captured;
-  list_of_points adjacent_points = get_adjacent_points(move);
-  for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
-  {
-    if (get_point(*point) == other_player)
-    {
-      if (liberties_on_group(*point) == 1)
-      {
-        groups_captured.push_back(*point);
-      }
-    }
-  }
-
-  set_point(move, to_play);
   ko.set(-1,-1);
-  int num_captures = 0; // Needed to check for ko.
-
-  for (list_of_points::iterator group = groups_captured.begin(); group != groups_captured.end(); group++)
+  Coordinate pass(-1,-1);
+  if (move == pass)
   {
-    if (get_point(*group) != EMPTY)
-    {
-      num_captures += remove_captures(*group);
-    }
+    if (one_pass) { return true; } // Both players have now passed so the game ends.
+    else { one_pass = true; }
   }
-
-  if (groups_captured.size() == 1 && num_captures == 1 && liberties_on_group(move) == 1)
+  else
   {
+    one_pass = false;
+    list_of_points groups_captured;
     list_of_points adjacent_points = get_adjacent_points(move);
     for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
     {
-      if (get_point(*point) == EMPTY)
+      if (get_point(*point) == other_player)
       {
-        ko = *point;
+        if (liberties_on_group(*point) == 1)
+        {
+          groups_captured.push_back(*point);
+        }
+      }
+    }
+    set_point(move, to_play);
+    int num_captures = 0; // Needed to check for ko.
+
+    for (list_of_points::iterator group = groups_captured.begin(); group != groups_captured.end(); group++)
+    {
+      if (get_point(*group) != EMPTY)
+      {
+        num_captures += remove_captures(*group);
+      }
+    }
+
+    if (groups_captured.size() == 1 && num_captures == 1 && liberties_on_group(move) == 1)
+    {
+      list_of_points adjacent_points = get_adjacent_points(move);
+      for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
+      {
+        if (get_point(*point) == EMPTY)
+        {
+          ko = *point;
+        }
       }
     }
   }
-  
   if (to_play == BLACK)
   {
     to_play = WHITE;
@@ -269,6 +278,7 @@ void GameState::play_move(Coordinate move)
     to_play = BLACK;
     other_player = WHITE;
   }
+  return false ;
 }
 
 is_legal_responses GameState::is_legal(Coordinate move)

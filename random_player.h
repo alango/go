@@ -7,7 +7,6 @@ class RandomPlayer: public Player
 {
 private:
   list_of_points possible_moves;
-  list_of_points possible_moves_this_turn;
 public:
   RandomPlayer();
   ~RandomPlayer();

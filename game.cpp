@@ -33,30 +33,6 @@ void Game::turn()
     move = white.get_move(game_state);
   }
   // move.print();
-  if (move == pass)
-  {
-    // This needs refactoring.
-    if (game_state.to_play == BLACK)
-    {
-      game_state.to_play = WHITE;
-      game_state.other_player = BLACK;
-    }
-    else
-    {
-      game_state.to_play = BLACK;
-      game_state.other_player = WHITE;
-    }
-
-    if (first_pass == true)
-    {
-      game_over = true;
-    }
-    first_pass = true;
-  }
-  else
-  { 
-    game_state.play_move(move);
-    first_pass = false;
-  }
+  game_over = game_state.play_move(move);
   game_record.push_back(move);
 }
