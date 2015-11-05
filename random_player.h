@@ -6,7 +6,7 @@
 class RandomPlayer: public Player
 {
 private:
-  list_of_points possible_moves;
+  list_of_points all_points;
 public:
   RandomPlayer();
   ~RandomPlayer();

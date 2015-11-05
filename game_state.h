@@ -29,19 +29,22 @@ enum is_legal_responses{ LEGAL_MOVE, POINT_NOT_ON_BOARD, POINT_OCCUPIED, KO_POIN
 
 class GameState
 {
+// GameState class that contains all the information about the current state of the game.
+// Also contains the necessary methods to determine if a move is legal and to score the game
+// once it is finished.
 public:
   player board_state[BOARD_SIZE][BOARD_SIZE];
   player to_play;
   player other_player;
   Coordinate ko;
   bool one_pass;
+  bool game_over;
 
 public:
   GameState();
   ~GameState();
-  // Place stone and update the board. Returns true if the game has ended and false
-  // otherwise.
-  bool play_move(Coordinate move);
+  // Place stone and update the board and game_state
+  void play_move(Coordinate move);
   // Prints the current state of the game.
   void print();
   // Returns the state of the point on the board.

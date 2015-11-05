@@ -48,6 +48,7 @@ GameState::GameState()
   to_play = BLACK;
   other_player = WHITE;
   one_pass = false;
+  game_over = false;
   ko.set(-1,-1);
 }
 
@@ -221,13 +222,13 @@ bool GameState::is_suicide(Coordinate move)
   else { return false; }
 }
 
-bool GameState::play_move(Coordinate move)
+void GameState::play_move(Coordinate move)
 {
   ko.set(-1,-1);
   Coordinate pass(-1,-1);
   if (move == pass)
   {
-    if (one_pass) { return true; } // Both players have now passed so the game ends.
+    if (one_pass) { game_over = true; } // Both players have now passed so the game ends.
     else { one_pass = true; }
   }
   else
@@ -278,7 +279,6 @@ bool GameState::play_move(Coordinate move)
     to_play = BLACK;
     other_player = WHITE;
   }
-  return false ;
 }
 
 is_legal_responses GameState::is_legal(Coordinate move)

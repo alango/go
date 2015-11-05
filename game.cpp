@@ -3,10 +3,7 @@
 
 Game::Game()
 {
-  pass.set(-1,-1);
-  game_over = false;
-  first_pass = false;
-  while (!game_over)
+  while (!game_state.game_over)
   {
     turn();
   }
@@ -33,6 +30,6 @@ void Game::turn()
     move = white.get_move(game_state);
   }
   // move.print();
-  game_over = game_state.play_move(move);
+  game_state.play_move(move);
   game_record.push_back(move);
 }
