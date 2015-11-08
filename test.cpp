@@ -125,6 +125,9 @@ void eye_test()
 void MCTSNode_test()
 {
   GameState game_state;
+  Coordinate move(0,0);
+  game_state.play_move(move);
+  game_state.print();
   MCTSNode mcts_node(game_state);
   mcts_node.print();
   mcts_node.simulate_and_update();

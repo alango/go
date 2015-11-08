@@ -3,7 +3,7 @@
 MCTSGameState::MCTSGameState(GameState game_state)
 {
   srand(time(NULL));
-  memcpy(game_state.board_state, board_state, sizeof(board_state));
+  memcpy(board_state, game_state.board_state, sizeof(board_state));
   to_play = game_state.to_play;
   other_player = game_state.other_player;
   ko = game_state.ko;
