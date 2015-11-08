@@ -43,7 +43,7 @@ public:
 public:
   GameState();
   ~GameState();
-  // Place stone and update the board and game_state
+  // Place stone and update the board and game_state.
   void play_move(Coordinate move);
   // Prints the current state of the game.
   void print();

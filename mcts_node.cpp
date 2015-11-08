@@ -2,6 +2,7 @@
 
 MCTSGameState::MCTSGameState(GameState game_state)
 {
+  srand(time(NULL));
   memcpy(game_state.board_state, board_state, sizeof(board_state));
   to_play = game_state.to_play;
   other_player = game_state.other_player;
@@ -56,14 +57,22 @@ int MCTSGameState::simulate_game()
   return playout_game_state.score_game();
 }
 
-MCTSNode::MCTSNode(GameState game_state)
-{
-  visits = 0;
-  wins = 0;
-  this->game_state = game_state;
-}
+MCTSNode::MCTSNode(GameState game_state):
+  visits(0),
+  wins(0),
+  game_state(game_state)
+{}
 
 MCTSNode::~MCTSNode() {}
+
+void MCTSNode::print()
+{
+  std::cout << "Visits: " << visits << std::endl;
+  std::cout << "Wins: " << wins << std::endl;
+  std::cout << "Leaf node: " << is_leaf() << std::endl;
+  std::cout << "Number of children: " << children.size() << std::endl;
+  game_state.print();
+}
 
 bool MCTSNode::is_leaf()
 {
@@ -93,4 +102,11 @@ void MCTSNode::expand()
       }
     }
   }
+}
+
+void MCTSNode::simulate_and_update()
+{
+  int result = game_state.simulate_game();
+  if (result > 0) { wins++; }
+  visits++;
 }

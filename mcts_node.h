@@ -26,12 +26,17 @@ private:
   int visits;
   int wins;
   std::vector<MCTSNode*> children;
-  GameState game_state;
+  MCTSGameState game_state;
 public:
   MCTSNode(GameState game_state);
   ~MCTSNode();
+  void print();
+  // Returns true if the node has no children.
   bool is_leaf();
+  // Creates child nodes for each possible move.
   void expand();
+  // Randomly playout a game and update the win/visit information.
+  void simulate_and_update();
 };
 
 #endif

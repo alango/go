@@ -3,6 +3,8 @@
 
 Game::Game()
 {
+  black.set_colour(BLACK);
+  white.set_colour(WHITE);
   while (!game_state.game_over)
   {
     turn();

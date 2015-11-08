@@ -2,6 +2,7 @@
 #include <iostream>
 #include "test.h"
 #include "game_state.h"
+#include "mcts_node.h"
 
 void ko_test()
 {
@@ -119,4 +120,14 @@ void eye_test()
   assert(game.is_eye(move, EMPTY) == true);
 
   std::cout << "Eye test passed" << std::endl;
+}
+
+void MCTSNode_test()
+{
+  GameState game_state;
+  MCTSNode mcts_node(game_state);
+  mcts_node.print();
+  mcts_node.simulate_and_update();
+  mcts_node.expand();
+  mcts_node.print();
 }
