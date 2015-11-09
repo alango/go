@@ -125,18 +125,13 @@ void eye_test()
 void MCTSNode_test()
 {
   GameState game_state;
-  Coordinate move(0,0);
-  game_state.play_move(move);
   MCTSNode mcts_node(game_state);
   mcts_node.print();
-  mcts_node.simulate_and_update();
-  mcts_node.simulate_and_update();
-  mcts_node.print();
   mcts_node.expand();
-  mcts_node.print();
   MCTSNode* child_node = mcts_node.children.front();
   child_node->print();
   child_node->simulate_and_update();
   child_node->print();
   mcts_node.print();
+  mcts_node.print_uct_map();
 }

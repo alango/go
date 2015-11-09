@@ -24,21 +24,26 @@ private:
 class MCTSNode
 {
 public:
-  int visits;
-  int wins;
+  double visits;
+  double wins;
   std::vector<MCTSNode*> children;
   MCTSGameState game_state;
   MCTSNode* parent_node;
+  Coordinate current_move;
 public:
   MCTSNode(GameState game_state);
   ~MCTSNode();
   void print();
+  // Print the board with the UCT values for each move.
+  void print_uct_map();
   // Returns true if the node has no children.
   bool is_leaf();
   // Creates child nodes for each possible move.
   void expand();
+  // Returns the UCT value for the given node.
+  double get_uct(MCTSNode* node);
   // Compares the UCT values between two nodes. Used by select_child();
-  bool compare_UCT(MCTSNode* node1, MCTSNode* node2);
+  bool compare_uct(MCTSNode* node1, MCTSNode* node2);
   // Selects the child node with the highest UCT value.
   MCTSNode* select_child();
   // Descends through the tree using select_child until a leaf node is reached.

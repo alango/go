@@ -1,5 +1,6 @@
 #include <math.h>
 #include <algorithm>
+#include <iomanip>
 #include "mcts_node.h"
 
 MCTSGameState::MCTSGameState(GameState game_state)
@@ -86,6 +87,43 @@ void MCTSNode::print()
   game_state.print();
 }
 
+void MCTSNode::print_uct_map()
+{
+  double board[BOARD_SIZE][BOARD_SIZE];
+  // Initialise board to all 0s.
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      board[row][col] = 0;
+    }
+  }
+
+  double uct;
+  // For each child node, add its UCT value to the board.
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+     child != children.end();
+     child++)
+  {
+    uct = get_uct(*child);
+    std::cout << uct << std::endl;    
+    board[(*child)->current_move.y][(*child)->current_move.x] = uct;
+  }
+
+  // Print the board.
+  std::cout << std::setprecision(3);
+  std::cout << "UCT map: " << std::endl;
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      std::cout << board[row][col] << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+}
+
 bool MCTSNode::is_leaf()
 {
   if (children.size() == 0)
@@ -116,6 +154,7 @@ void MCTSNode::expand()
         }
         child_node->parent_node = this;
         child_node->game_state.play_move(move);
+        child_node->current_move = move;
         child_node->simulate_and_update();
         children.push_back(child_node);
       }
@@ -123,13 +162,16 @@ void MCTSNode::expand()
   }
 }
 
-bool MCTSNode::compare_UCT(MCTSNode* node1, MCTSNode* node2)
+double MCTSNode::get_uct(MCTSNode* node)
+{
+  double ans = (node->wins/node->visits) + sqrt(log(2*visits)/node->visits);
+  return ans;
+}
+
+bool MCTSNode::compare_uct(MCTSNode* node1, MCTSNode* node2)
 // Returns true if node1 has a lower UCT value than node2.
 {
-  double uct1, uct2;
-  uct1 = (node1->wins / node1->visits) + sqrt(log(2*visits) / node1->visits);
-  uct2 = (node2->wins / node2->visits) + sqrt(log(2*visits) / node2->visits);
-  if (uct1 < uct2) { return true; }
+  if (get_uct(node1) < get_uct(node1)) { return true; }
   else { return false; }
 }
 
@@ -140,7 +182,7 @@ MCTSNode* MCTSNode::select_child()
        child != children.end();
        child++)
   {
-    if (compare_UCT(best, *child))
+    if (compare_uct(best, *child))
     {
       best = *child;
     }
