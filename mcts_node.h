@@ -23,11 +23,12 @@ private:
 
 class MCTSNode
 {
-private:
+public:
   int visits;
   int wins;
   std::vector<MCTSNode*> children;
   MCTSGameState game_state;
+  MCTSNode* parent_node;
 public:
   MCTSNode(GameState game_state);
   ~MCTSNode();
@@ -38,6 +39,8 @@ public:
   void expand();
   // Randomly playout a game and update the win/visit information.
   void simulate_and_update();
+  // Update the win/visit information, and call update on parent nodes.
+  void update(bool win);
 };
 
 #endif

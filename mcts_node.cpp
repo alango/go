@@ -8,6 +8,7 @@ MCTSGameState::MCTSGameState(GameState game_state)
   other_player = game_state.other_player;
   ko = game_state.ko;
   one_pass = game_state.one_pass;
+  game_record = game_state.game_record;
   Coordinate move;
   for (int y = 0; y < BOARD_SIZE; y++)
   {
@@ -60,7 +61,8 @@ int MCTSGameState::simulate_game()
 MCTSNode::MCTSNode(GameState game_state):
   visits(0),
   wins(0),
-  game_state(game_state)
+  game_state(game_state),
+  parent_node(NULL)
 {}
 
 MCTSNode::~MCTSNode() {}
@@ -96,11 +98,27 @@ void MCTSNode::expand()
       move.set(x,y);
       if (game_state.is_legal(move) == LEGAL_MOVE)
       {
-        MCTSNode new_node(game_state);
-        new_node.game_state.play_move(move);
-        children.push_back(&new_node);
+        MCTSNode* child_node = NULL;
+        if (!(child_node = new MCTSNode(game_state)))
+        {
+          std::cout << "Out of memory" << std::endl;
+          exit(1);
+        }
+        child_node->parent_node = this;
+        child_node->game_state.play_move(move);
+        children.push_back(child_node);
       }
     }
+  }
+}
+
+void MCTSNode::update(bool win)
+{
+  if (win) { wins++; }
+  visits++;
+  if (parent_node != NULL)
+  {
+    parent_node->update(win);
   }
 }
 
@@ -109,7 +127,7 @@ void MCTSNode::simulate_and_update()
   int result = game_state.simulate_game();
   // Simulate a game and check if it is win for the player who played
   // the last move.
-  if (result > 0 && game_state.other_player == BLACK) { wins++; }
-  else if (result < 0 && game_state.other_player == WHITE) { wins++; }
-  visits++;
+  if (result > 0 && game_state.other_player == BLACK) { update(true); }
+  else if (result < 0 && game_state.other_player == WHITE) { update(true); }
+  else { update(false); }
 }
