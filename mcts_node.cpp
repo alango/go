@@ -1,3 +1,5 @@
+#include <math.h>
+#include <algorithm>
 #include "mcts_node.h"
 
 MCTSGameState::MCTSGameState(GameState game_state)
@@ -65,7 +67,15 @@ MCTSNode::MCTSNode(GameState game_state):
   parent_node(NULL)
 {}
 
-MCTSNode::~MCTSNode() {}
+MCTSNode::~MCTSNode()
+{
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+     child != children.end();
+     child++)
+  {
+    delete *child;
+  }
+}
 
 void MCTSNode::print()
 {
@@ -106,9 +116,47 @@ void MCTSNode::expand()
         }
         child_node->parent_node = this;
         child_node->game_state.play_move(move);
+        child_node->simulate_and_update();
         children.push_back(child_node);
       }
     }
+  }
+}
+
+bool MCTSNode::compare_UCT(MCTSNode* node1, MCTSNode* node2)
+// Returns true if node1 has a lower UCT value than node2.
+{
+  double uct1, uct2;
+  uct1 = (node1->wins / node1->visits) + sqrt(log(2*visits) / node1->visits);
+  uct2 = (node2->wins / node2->visits) + sqrt(log(2*visits) / node2->visits);
+  if (uct1 < uct2) { return true; }
+  else { return false; }
+}
+
+MCTSNode* MCTSNode::select_child()
+{
+  MCTSNode* best = *(children.begin());
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+       child != children.end();
+       child++)
+  {
+    if (compare_UCT(best, *child))
+    {
+      best = *child;
+    }
+  }
+  return best;
+}
+
+MCTSNode* MCTSNode::descend_to_leaf()
+{
+  if (is_leaf())
+  {
+    return this;
+  }
+  else
+  {
+    return select_child()->descend_to_leaf();
   }
 }
 

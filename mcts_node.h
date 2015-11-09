@@ -37,6 +37,12 @@ public:
   bool is_leaf();
   // Creates child nodes for each possible move.
   void expand();
+  // Compares the UCT values between two nodes. Used by select_child();
+  bool compare_UCT(MCTSNode* node1, MCTSNode* node2);
+  // Selects the child node with the highest UCT value.
+  MCTSNode* select_child();
+  // Descends through the tree using select_child until a leaf node is reached.
+  MCTSNode* descend_to_leaf();
   // Randomly playout a game and update the win/visit information.
   void simulate_and_update();
   // Update the win/visit information, and call update on parent nodes.

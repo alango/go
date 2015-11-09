@@ -430,8 +430,8 @@ int GameState::score_game()
       }
     }
   }
-  std::cout << "Black: " << black_score << std::endl;
-  std::cout << "White: " << white_score << std::endl;
+  // std::cout << "Black: " << black_score << std::endl;
+  // std::cout << "White: " << white_score << std::endl;
   return black_score - white_score;
 }
 
