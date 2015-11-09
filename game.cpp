@@ -11,10 +11,7 @@ Game::Game()
   }
   game_state.print();
   game_state.score_game();
-  for (list_of_points::iterator move = game_record.begin(); move != game_record.end(); move++)
-  {
-    move->print();
-  }
+  game_state.print_game_record();
 }
 
 Game::~Game() {};
@@ -33,5 +30,4 @@ void Game::turn()
   }
   // move.print();
   game_state.play_move(move);
-  game_record.push_back(move);
 }

@@ -279,6 +279,7 @@ void GameState::play_move(Coordinate move)
     to_play = BLACK;
     other_player = WHITE;
   }
+  game_record.push_back(move);
 }
 
 is_legal_responses GameState::is_legal(Coordinate move)
@@ -450,4 +451,12 @@ void GameState::print()
     std::cout << std::endl;
   }
   std::cout << std::endl;
+}
+
+void GameState::print_game_record()
+{  
+  for (list_of_points::iterator move = game_record.begin(); move != game_record.end(); move++)
+  {
+    move->print();
+  }
 }

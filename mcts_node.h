@@ -9,6 +9,7 @@ class MCTSGameState : public GameState
 // during MCTS.
 {
   list_of_points all_points;
+  Coordinate last_move;
 public:
   MCTSGameState(GameState game_state);
   ~MCTSGameState();

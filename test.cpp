@@ -131,6 +131,7 @@ void MCTSNode_test()
   MCTSNode mcts_node(game_state);
   mcts_node.print();
   mcts_node.simulate_and_update();
+  mcts_node.simulate_and_update();
   mcts_node.expand();
   mcts_node.print();
 }

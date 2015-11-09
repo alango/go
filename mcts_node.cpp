@@ -107,6 +107,9 @@ void MCTSNode::expand()
 void MCTSNode::simulate_and_update()
 {
   int result = game_state.simulate_game();
-  if (result > 0) { wins++; }
+  // Simulate a game and check if it is win for the player who played
+  // the last move.
+  if (result > 0 && game_state.other_player == BLACK) { wins++; }
+  else if (result < 0 && game_state.other_player == WHITE) { wins++; }
   visits++;
 }

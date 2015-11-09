@@ -12,7 +12,7 @@ int main()
   ko_test();
   eye_test();
   MCTSNode_test();
-  // Game game;
+  Game game;
   return 0;
 }
 

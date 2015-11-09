@@ -39,6 +39,7 @@ public:
   Coordinate ko;
   bool one_pass;
   bool game_over;
+  list_of_points game_record;
 
 public:
   GameState();
@@ -47,6 +48,8 @@ public:
   void play_move(Coordinate move);
   // Prints the current state of the game.
   void print();
+  // Prints out the list of moves played in the game so far.
+  void print_game_record();
   // Returns the state of the point on the board.
   player get_point(Coordinate point);
   // Sets the value of the given point.

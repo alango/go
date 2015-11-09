@@ -11,7 +11,6 @@ private:
   GameState game_state;
   RandomPlayer black;
   RandomPlayer white;
-  list_of_points game_record;
 
 public:
   Game();
