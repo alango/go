@@ -125,13 +125,20 @@ void eye_test()
 void MCTSNode_test()
 {
   GameState game_state;
+  Coordinate move(0,0);
+  game_state.play_move(move);
+  move.set(0,1);
+  game_state.play_move(move);
   MCTSNode mcts_node(game_state);
   mcts_node.print();
-  mcts_node.expand();
-  MCTSNode* child_node = mcts_node.children.front();
-  child_node->print();
-  child_node->simulate_and_update();
-  child_node->print();
+  MCTSNode* leaf;
+  for (int i = 0; i < 100; i++)
+  {
+    std::cout << i << std::endl;
+    leaf = mcts_node.descend_to_leaf();
+    leaf->expand();
+  }
   mcts_node.print();
+  mcts_node.print_visit_map();
   mcts_node.print_uct_map();
 }

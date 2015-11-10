@@ -36,6 +36,8 @@ public:
   void print();
   // Print the board with the UCT values for each move.
   void print_uct_map();
+  // Print the board with the number of times each move was visited.
+  void print_visit_map();
   // Returns true if the node has no children.
   bool is_leaf();
   // Creates child nodes for each possible move.

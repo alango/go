@@ -106,12 +106,11 @@ void MCTSNode::print_uct_map()
      child++)
   {
     uct = get_uct(*child);
-    std::cout << uct << std::endl;    
     board[(*child)->current_move.y][(*child)->current_move.x] = uct;
   }
 
   // Print the board.
-  std::cout << std::setprecision(3);
+  std::cout << std::setprecision(3) << std::fixed;
   std::cout << "UCT map: " << std::endl;
   for (int row = 0; row < BOARD_SIZE; row++)
   {
@@ -124,6 +123,39 @@ void MCTSNode::print_uct_map()
   std::cout << std::endl;
 }
 
+void MCTSNode::print_visit_map()
+{
+  int board[BOARD_SIZE][BOARD_SIZE];
+  // Initialise board to all 0s.
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      board[row][col] = 0;
+    }
+  }
+
+  // For each child node, add the number of times it has been
+  // visited to the board.
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+     child != children.end();
+     child++)
+  {
+    board[(*child)->current_move.y][(*child)->current_move.x] = (*child)->visits;
+  }
+
+  // Print the board.
+  std::cout << "Visit map: " << std::endl;
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      std::cout << board[row][col] << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+}
 bool MCTSNode::is_leaf()
 {
   if (children.size() == 0)
@@ -171,7 +203,7 @@ double MCTSNode::get_uct(MCTSNode* node)
 bool MCTSNode::compare_uct(MCTSNode* node1, MCTSNode* node2)
 // Returns true if node1 has a lower UCT value than node2.
 {
-  if (get_uct(node1) < get_uct(node1)) { return true; }
+  if (get_uct(node1) < get_uct(node2)) { return true; }
   else { return false; }
 }
 
