@@ -48,12 +48,17 @@ public:
   bool compare_uct(MCTSNode* node1, MCTSNode* node2);
   // Selects the child node with the highest UCT value.
   MCTSNode* select_child();
+  // Selects the move which has been most visited.
+  Coordinate select_move();
   // Descends through the tree using select_child until a leaf node is reached.
   MCTSNode* descend_to_leaf();
   // Randomly playout a game and update the win/visit information.
   void simulate_and_update();
   // Update the win/visit information, and call update on parent nodes.
   void update(bool win);
+  // Deletes all the child branches except the one with the specified next
+  // move, and returns a pointer to the remaining branch.
+  MCTSNode* move(Coordinate move);
 };
 
 #endif

@@ -28,6 +28,6 @@ void Game::turn()
   {
     move = white.get_move(game_state);
   }
-  // move.print();
+  move.print();
   game_state.play_move(move);
 }

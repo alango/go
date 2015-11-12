@@ -2,6 +2,7 @@
 #define MCTS_PLAYER_H
 
 #include "player.h"
+#include "mcts_node.h"
 
 class MCTSPlayer: public Player
 {

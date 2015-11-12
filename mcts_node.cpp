@@ -192,6 +192,18 @@ void MCTSNode::expand()
       }
     }
   }
+  move.set(-1,-1);
+  MCTSNode* child_node = NULL;
+  if (!(child_node = new MCTSNode(game_state)))
+  {
+    std::cout << "Out of memory" << std::endl;
+    exit(1);
+  }
+  child_node->parent_node = this;
+  child_node->game_state.play_move(move);
+  child_node->current_move = move;
+  child_node->simulate_and_update();
+  children.push_back(child_node);
 }
 
 double MCTSNode::get_uct(MCTSNode* node)
@@ -220,6 +232,23 @@ MCTSNode* MCTSNode::select_child()
     }
   }
   return best;
+}
+
+Coordinate MCTSNode::select_move()
+{
+  Coordinate move(-1,-1);
+  int most_visits = 0;
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+       child != children.end();
+       child++)
+  {
+    if ((*child)->visits > most_visits)
+    {
+      most_visits = (*child)->visits;
+      move = (*child)->current_move;
+    }
+  }
+  return move;
 }
 
 MCTSNode* MCTSNode::descend_to_leaf()
@@ -252,4 +281,24 @@ void MCTSNode::simulate_and_update()
   if (result > 0 && game_state.other_player == BLACK) { update(true); }
   else if (result < 0 && game_state.other_player == WHITE) { update(true); }
   else { update(false); }
+}
+
+MCTSNode* MCTSNode::move(Coordinate move)
+{
+  MCTSNode* new_current_node;
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+     child != children.end();
+     child++)
+  {
+    if (!((*child)->current_move == move))
+    {
+      delete *child;
+    }
+    else
+    {
+      new_current_node = *child;
+      new_current_node->parent_node = NULL;
+    }
+  }
+  return new_current_node;
 }

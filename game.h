@@ -4,13 +4,14 @@
 #include "game_state.h"
 #include "human_player.h"
 #include "random_player.h"
+#include "mcts_player.h"
 
 class Game
 {
 private:
   GameState game_state;
   RandomPlayer black;
-  RandomPlayer white;
+  MCTSPlayer white;
 
 public:
   Game();
