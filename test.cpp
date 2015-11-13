@@ -1,7 +1,9 @@
 #include <assert.h>
 #include <iostream>
+#include <ctime>
 #include "test.h"
 #include "game_state.h"
+#include "mcts_node.h"
 
 void ko_test()
 {
@@ -119,4 +121,32 @@ void eye_test()
   assert(game.is_eye(move, EMPTY) == true);
 
   std::cout << "Eye test passed" << std::endl;
+}
+
+void MCTSNode_test()
+{
+  GameState game_state;
+  Coordinate move(0,0);
+  game_state.play_move(move);
+  move.set(0,1);
+  game_state.play_move(move);
+  MCTSNode mcts_node(game_state);
+  mcts_node.print();
+  std::clock_t start;
+  start = std::clock();
+  for (int i = 0; i < 79; i++)
+  {
+    mcts_node.simulate_and_update();
+  }
+  double duration = (std::clock()-start) / (double) CLOCKS_PER_SEC;
+  std::cout << "Time for 100 simulations: " << duration << std::endl;
+  mcts_node.print();
+
+  start = std::clock();
+  mcts_node.expand();
+  duration = (std::clock()-start) / (double) CLOCKS_PER_SEC;
+  std::cout << "Time to expand node: " << duration << std::endl;
+  mcts_node.print();
+  // mcts_node.print_visit_map();
+  // mcts_node.print_uct_map();
 }

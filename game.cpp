@@ -3,18 +3,15 @@
 
 Game::Game()
 {
-  pass.set(-1,-1);
-  game_over = false;
-  while (!game_over)
+  black.set_colour(BLACK);
+  white.set_colour(WHITE);
+  while (!game_state.game_over)
   {
     turn();
   }
   game_state.print();
-  game_state.score_game();
-  for (list_of_points::iterator move = game_record.begin(); move != game_record.end(); move++)
-  {
-    move->print();
-  }
+  std::cout << "Final score: " << game_state.score_game() << std::endl;
+  game_state.print_game_record();
 }
 
 Game::~Game() {};
@@ -31,7 +28,6 @@ void Game::turn()
   {
     move = white.get_move(game_state);
   }
-  // move.print();
-  game_over = game_state.play_move(move);
-  game_record.push_back(move);
+  move.print();
+  game_state.play_move(move);
 }

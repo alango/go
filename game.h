@@ -4,16 +4,14 @@
 #include "game_state.h"
 #include "human_player.h"
 #include "random_player.h"
+#include "mcts_player.h"
 
 class Game
 {
 private:
   GameState game_state;
   RandomPlayer black;
-  RandomPlayer white;
-  Coordinate pass;
-  bool game_over;
-  list_of_points game_record;
+  MCTSPlayer white;
 
 public:
   Game();

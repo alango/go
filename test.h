@@ -3,5 +3,7 @@
 
 void ko_test();
 void eye_test();
+void MCTSNode_test();
+
 
 #endif
