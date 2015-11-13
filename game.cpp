@@ -10,7 +10,7 @@ Game::Game()
     turn();
   }
   game_state.print();
-  game_state.score_game();
+  std::cout << "Final score: " << game_state.score_game() << std::endl;
   game_state.print_game_record();
 }
 

@@ -17,15 +17,18 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
     Coordinate last_move = game_state.game_record.back();
     current_node = current_node->move(last_move);
   }
+  current_node->print();
   // Run MCTS steps.
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 500; i++)
   {
-    std::cout << i << std::endl;
+    if (i%100==0) {std::cout<<i<<std::endl;}
     MCTSNode* leaf = current_node->descend_to_leaf();
     leaf->expand();
+    leaf->simulate_and_update();
   }
   current_node->print();
   current_node->print_visit_map();
+  current_node->print_win_ratio_map();
   current_node->print_uct_map();
 
   // Find move with most visits.

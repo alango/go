@@ -24,6 +24,7 @@ private:
 class MCTSNode
 {
 public:
+  bool is_leaf;
   double visits;
   double wins;
   std::vector<MCTSNode*> children;
@@ -38,8 +39,8 @@ public:
   void print_uct_map();
   // Print the board with the number of times each move was visited.
   void print_visit_map();
-  // Returns true if the node has no children.
-  bool is_leaf();
+  // Print the board with the win ration for each move.
+  void print_win_ratio_map();
   // Creates child nodes for each possible move.
   void expand();
   // Returns the UCT value for the given node.

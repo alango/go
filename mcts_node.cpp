@@ -62,6 +62,7 @@ int MCTSGameState::simulate_game()
 }
 
 MCTSNode::MCTSNode(GameState game_state):
+  is_leaf(true),
   visits(0),
   wins(0),
   game_state(game_state),
@@ -82,7 +83,7 @@ void MCTSNode::print()
 {
   std::cout << "Visits: " << visits << std::endl;
   std::cout << "Wins: " << wins << std::endl;
-  std::cout << "Leaf node: " << is_leaf() << std::endl;
+  std::cout << "Leaf node: " << is_leaf << std::endl;
   std::cout << "Number of children: " << children.size() << std::endl;
   game_state.print();
 }
@@ -156,27 +157,52 @@ void MCTSNode::print_visit_map()
   }
   std::cout << std::endl;
 }
-bool MCTSNode::is_leaf()
+
+void MCTSNode::print_win_ratio_map()
 {
-  if (children.size() == 0)
+  double board[BOARD_SIZE][BOARD_SIZE];
+  // Initialise board to all 0s.
+  for (int row = 0; row < BOARD_SIZE; row++)
   {
-    return true;
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      board[row][col] = 0;
+    }
   }
-  else
+
+  // For each child node, add its win ratio to the board.
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+     child != children.end();
+     child++)
   {
-    return false;
+    board[(*child)->current_move.y][(*child)->current_move.x] = (*child)->wins/(*child)->visits;
   }
+
+  // Print the board.
+  std::cout << std::setprecision(2) << std::fixed;
+  std::cout << "Win ratio map: " << std::endl;
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      std::cout << board[row][col] << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
 }
 
 void MCTSNode::expand()
 {
+  is_leaf = false;
   Coordinate move;
   for (int y = 0; y < BOARD_SIZE; y++)
   {
     for (int x = 0; x < BOARD_SIZE; x++)
     {
       move.set(x,y);
-      if (game_state.is_legal(move) == LEGAL_MOVE)
+      if (game_state.is_legal(move) == LEGAL_MOVE
+       && !game_state.is_eye(move, game_state.to_play))
       {
         MCTSNode* child_node = NULL;
         if (!(child_node = new MCTSNode(game_state)))
@@ -187,7 +213,6 @@ void MCTSNode::expand()
         child_node->parent_node = this;
         child_node->game_state.play_move(move);
         child_node->current_move = move;
-        child_node->simulate_and_update();
         children.push_back(child_node);
       }
     }
@@ -202,12 +227,12 @@ void MCTSNode::expand()
   child_node->parent_node = this;
   child_node->game_state.play_move(move);
   child_node->current_move = move;
-  child_node->simulate_and_update();
   children.push_back(child_node);
 }
 
 double MCTSNode::get_uct(MCTSNode* node)
 {
+  if (node->visits == 0) { return 1000; }
   double ans = (node->wins/node->visits) + sqrt(log(2*visits)/node->visits);
   return ans;
 }
@@ -253,7 +278,7 @@ Coordinate MCTSNode::select_move()
 
 MCTSNode* MCTSNode::descend_to_leaf()
 {
-  if (is_leaf())
+  if (is_leaf)
   {
     return this;
   }
@@ -269,7 +294,9 @@ void MCTSNode::update(bool win)
   visits++;
   if (parent_node != NULL)
   {
-    parent_node->update(win);
+    // A win for the current node is a loss for the parent
+    // node and vice versa.
+    parent_node->update(!win);
   }
 }
 
