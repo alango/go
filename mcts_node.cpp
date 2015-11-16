@@ -72,8 +72,8 @@ MCTSNode::MCTSNode(GameState game_state):
 MCTSNode::~MCTSNode()
 {
   for (std::vector<MCTSNode*>::iterator child = children.begin();
-     child != children.end();
-     child++)
+       child != children.end();
+       child++)
   {
     delete *child;
   }
@@ -103,8 +103,8 @@ void MCTSNode::print_uct_map()
   double uct;
   // For each child node, add its UCT value to the board.
   for (std::vector<MCTSNode*>::iterator child = children.begin();
-     child != children.end();
-     child++)
+       child != children.end();
+       child++)
   {
     uct = get_uct(*child);
     board[(*child)->current_move.y][(*child)->current_move.x] = uct;
@@ -139,8 +139,8 @@ void MCTSNode::print_visit_map()
   // For each child node, add the number of times it has been
   // visited to the board.
   for (std::vector<MCTSNode*>::iterator child = children.begin();
-     child != children.end();
-     child++)
+       child != children.end();
+       child++)
   {
     board[(*child)->current_move.y][(*child)->current_move.x] = (*child)->visits;
   }
@@ -172,8 +172,8 @@ void MCTSNode::print_win_ratio_map()
 
   // For each child node, add its win ratio to the board.
   for (std::vector<MCTSNode*>::iterator child = children.begin();
-     child != children.end();
-     child++)
+       child != children.end();
+       child++)
   {
     board[(*child)->current_move.y][(*child)->current_move.x] = (*child)->wins/(*child)->visits;
   }
@@ -314,8 +314,8 @@ MCTSNode* MCTSNode::move(Coordinate move)
 {
   MCTSNode* new_current_node;
   for (std::vector<MCTSNode*>::iterator child = children.begin();
-     child != children.end();
-     child++)
+       child != children.end();
+       child++)
   {
     if (!((*child)->current_move == move))
     {

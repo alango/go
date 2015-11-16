@@ -44,12 +44,58 @@ void ko_test()
   move.set(8,7);
   game.play_move(move);
 
-  move.set(8,0);
+  move.set(7,8);
   game.play_move(move);
   
   move.set(3,4);
   // Should now be able to take the ko.
   assert(game.is_legal(move) == LEGAL_MOVE);
+
+  // Test for case where single stone is captured but larger
+  // group can be recaptured (snapback).
+  GameState game1;
+  move.set(1,0);
+  game1.play_move(move);
+
+  move.set(2,0);
+  game1.play_move(move);
+
+  move.set(1,1);
+  game1.play_move(move);
+
+  move.set(2,1);
+  game1.play_move(move);
+
+  move.set(1,2);
+  game1.play_move(move);
+
+  move.set(2,2);
+  game1.play_move(move);
+
+  move.set(0,2);
+  game1.play_move(move);
+
+  move.set(1,3);
+  game1.play_move(move);
+
+  move.set(8,8);
+  game1.play_move(move);
+
+  move.set(0,3);
+  game1.play_move(move);
+
+  move.set(7,8);
+  game1.play_move(move);
+
+  move.set(0,0);
+  game1.play_move(move);
+
+  move.set(0,1);
+  game1.play_move(move);
+
+  move.set(0,0);
+  // This shouldn't be a ko.
+  assert(game1.is_legal(move) != KO_POINT);
 
   std::cout << "Ko test passed" << std::endl;
 }

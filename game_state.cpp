@@ -237,7 +237,9 @@ void GameState::play_move(Coordinate move)
     one_pass = false;
     list_of_points groups_captured;
     list_of_points adjacent_points = get_adjacent_points(move);
-    for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
+    for (list_of_points::iterator point = adjacent_points.begin();
+         point != adjacent_points.end();
+         point++)
     {
       if (get_point(*point) == other_player)
       {
@@ -250,7 +252,9 @@ void GameState::play_move(Coordinate move)
     set_point(move, to_play);
     int num_captures = 0; // Needed to check for ko.
 
-    for (list_of_points::iterator group = groups_captured.begin(); group != groups_captured.end(); group++)
+    for (list_of_points::iterator group = groups_captured.begin();
+         group != groups_captured.end();
+         group++)
     {
       if (get_point(*group) != EMPTY)
       {
@@ -258,14 +262,30 @@ void GameState::play_move(Coordinate move)
       }
     }
 
-    if (groups_captured.size() == 1 && num_captures == 1 && liberties_on_group(move) == 1)
+    if (num_captures == 1 && liberties_on_group(move) == 1)
     {
       list_of_points adjacent_points = get_adjacent_points(move);
-      for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
+      for (list_of_points::iterator point = adjacent_points.begin();
+           point != adjacent_points.end();
+           point++)
       {
         if (get_point(*point) == EMPTY)
+        // The empty adjacent point is the point where the capture has
+        // just been made, so this would become the ko point.
         {
           ko = *point;
+        }
+      }
+      for (list_of_points::iterator point = adjacent_points.begin();
+           point != adjacent_points.end();
+           point++)
+      {
+        if (get_point(*point) == to_play)
+        // If the stone just played is part of a group, then that group
+        // can legally be captured by playing on the empty adjacent point
+        // and so there is no ko.
+        {
+          ko.set(-1,-1);
         }
       }
     }
@@ -303,7 +323,9 @@ is_legal_responses GameState::is_legal(Coordinate move)
   // Check for capture. If a capture has been made, then the move is legal.
   // If not, then check if the move is suicide.
   list_of_points adjacent_points = get_adjacent_points(move);
-  for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
+  for (list_of_points::iterator point = adjacent_points.begin();
+       point != adjacent_points.end();
+       point++)
   {
     if (get_point(*point) == other_player)
     {
