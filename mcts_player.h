@@ -8,6 +8,7 @@ class MCTSPlayer: public Player
 {
 private:
   MCTSNode* current_node;
+  int simulations_per_turn;
 public:
   MCTSPlayer();
   ~MCTSPlayer();

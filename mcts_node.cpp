@@ -1,6 +1,7 @@
 #include <math.h>
 #include <algorithm>
 #include <iomanip>
+#include <ctime>
 #include "mcts_node.h"
 
 MCTSGameState::MCTSGameState(GameState game_state)
@@ -27,6 +28,9 @@ MCTSGameState::~MCTSGameState() {}
 
 void MCTSGameState::random_move()
 {
+  static double time_to_find_move = 0;
+  static double time_to_play_move = 0;
+  std::clock_t start = std::clock();
   list_of_points possible_moves = all_points;
   Coordinate move;
   bool move_found = false;
@@ -46,8 +50,14 @@ void MCTSGameState::random_move()
   {
     // No moves remaining so pass.
     move.set(-1,-1);
+    std::cout << "Time to find move: " << time_to_find_move/(double)CLOCKS_PER_SEC << std::endl;
+    std::cout << "Playing time: " << time_to_play_move/(double)CLOCKS_PER_SEC << std::endl;
   }
+  double found_move = std::clock();
+  time_to_find_move += found_move-start;
   play_move(move);
+  double move_played = std::clock();
+  time_to_play_move += move_played-found_move;
 }
 
 int MCTSGameState::simulate_game()

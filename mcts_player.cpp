@@ -5,6 +5,7 @@ MCTSPlayer::MCTSPlayer()
   GameState game_state;
   current_node = new MCTSNode(game_state);
   current_node->expand();
+  simulations_per_turn = 500;
 }
 
 MCTSPlayer::~MCTSPlayer() {}
@@ -17,9 +18,8 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
     Coordinate last_move = game_state.game_record.back();
     current_node = current_node->move(last_move);
   }
-  current_node->print();
   // Run MCTS steps.
-  for (int i = 0; i < 500; i++)
+  for (int i = 0; i < simulations_per_turn; i++)
   {
     if (i%100==0) {std::cout<<i<<std::endl;}
     MCTSNode* leaf = current_node->descend_to_leaf();
@@ -30,6 +30,11 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   current_node->print_visit_map();
   current_node->print_win_ratio_map();
   current_node->print_uct_map();
+
+  if (current_node->wins / current_node->visits < 0.05)
+  {
+    simulations_per_turn = 50;
+  }
 
   // Find move with most visits.
   Coordinate move = current_node->select_move();
