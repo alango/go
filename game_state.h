@@ -40,6 +40,7 @@ public:
   bool one_pass;
   bool game_over;
   list_of_points game_record;
+  list_of_points possible_moves;
 
 public:
   GameState();

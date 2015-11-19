@@ -175,12 +175,12 @@ void MCTSNode_test()
   MCTSNode mcts_node(game_state);
   std::clock_t start;
   start = std::clock();
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 10000; i++)
   {
     mcts_node.simulate_and_update();
   }
   double duration = (std::clock()-start) / (double) CLOCKS_PER_SEC;
-  std::cout << "Time for 100 simulations: " << duration << std::endl;
+  std::cout << "Time for 10000 simulations: " << duration << std::endl;
 
   start = std::clock();
   mcts_node.expand();

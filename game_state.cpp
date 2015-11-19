@@ -39,11 +39,14 @@ void Coordinate::print()
 
 GameState::GameState()
 {
+  Coordinate move;
   for (int row = 0; row < BOARD_SIZE; row++)
   {
     for (int col = 0; col < BOARD_SIZE; col++)
     {
       board_state[row][col] = EMPTY;
+      move.set(col, row);
+      possible_moves.push_back(move);
     }
   }
   to_play = BLACK;
@@ -167,7 +170,9 @@ int GameState::liberties_on_group(Coordinate coordinate)
     stones_to_check.pop_back();
     checked_stones.push_back(current_stone);
     list_of_points adjacent_points = get_adjacent_points(current_stone);
-    for (list_of_points::iterator point = adjacent_points.begin(); point != adjacent_points.end(); point++)
+    for (list_of_points::iterator point = adjacent_points.begin();
+         point != adjacent_points.end();
+         point++)
     {
       if (get_point(*point) == EMPTY)
       {
@@ -201,9 +206,13 @@ int GameState::remove_captures(Coordinate point)
     current_point = points_to_check.back();
     points_to_check.pop_back();
     set_point(current_point, EMPTY);
+    // Re-add this point to the list of possible moves.
+    possible_moves.push_back(current_point);
     num_captures++;
     list_of_points adjacents = get_adjacent_points(current_point);
-    for (list_of_points::iterator point = adjacents.begin(); point != adjacents.end(); point++)
+    for (list_of_points::iterator point = adjacents.begin();
+         point != adjacents.end();
+         point++)
     {
       if (get_point(*point) == colour)
       {
@@ -234,6 +243,10 @@ void GameState::play_move(Coordinate move)
   }
   else
   {
+    possible_moves.erase(std::remove(possible_moves.begin(),
+                                     possible_moves.end(),
+                                     move),
+                         possible_moves.end()); 
     one_pass = false;
     list_of_points groups_captured;
     list_of_points adjacent_points = get_adjacent_points(move);

@@ -13,6 +13,7 @@ MCTSGameState::MCTSGameState(GameState game_state)
   ko = game_state.ko;
   one_pass = game_state.one_pass;
   game_record = game_state.game_record;
+  possible_moves = game_state.possible_moves;
   Coordinate move;
   for (int y = 0; y < BOARD_SIZE; y++)
   {
@@ -31,7 +32,6 @@ void MCTSGameState::random_move()
   static double time_to_find_move = 0;
   static double time_to_play_move = 0;
   std::clock_t start = std::clock();
-  list_of_points possible_moves = all_points;
   Coordinate move;
   bool move_found = false;
   int move_index;
@@ -50,8 +50,8 @@ void MCTSGameState::random_move()
   {
     // No moves remaining so pass.
     move.set(-1,-1);
-    std::cout << "Time to find move: " << time_to_find_move/(double)CLOCKS_PER_SEC << std::endl;
-    std::cout << "Playing time: " << time_to_play_move/(double)CLOCKS_PER_SEC << std::endl;
+    // std::cout << "Time to find move: " << time_to_find_move/(double)CLOCKS_PER_SEC << std::endl;
+    // std::cout << "Playing time: " << time_to_play_move/(double)CLOCKS_PER_SEC << std::endl;
   }
   double found_move = std::clock();
   time_to_find_move += found_move-start;
