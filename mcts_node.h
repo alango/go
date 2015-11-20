@@ -24,9 +24,11 @@ private:
 class MCTSNode
 {
 public:
+  // is_leaf is true until all possible child nodes have been created.
   bool is_leaf;
   double visits;
   double wins;
+  list_of_points potential_children;
   std::vector<MCTSNode*> children;
   MCTSGameState game_state;
   MCTSNode* parent_node;
@@ -42,8 +44,9 @@ public:
   void print_visit_map();
   // Print the board with the win ration for each move.
   void print_win_ratio_map();
-  // Creates child nodes for each possible move.
-  void expand();
+  // Randomly chooses a move and creates the corresponding child node,
+  // returning a pointer to it.
+  MCTSNode* expand();
   // Returns the UCT value for the given node.
   double get_uct(MCTSNode* node);
   // Compares the UCT values between two nodes. Used by select_child();

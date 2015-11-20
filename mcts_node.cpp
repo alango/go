@@ -237,42 +237,45 @@ void MCTSNode::print_win_ratio_map()
   std::cout << std::endl;
 }
 
-void MCTSNode::expand()
+MCTSNode* MCTSNode::expand()
 {
-  is_leaf = false;
-  Coordinate move;
-  for (int y = 0; y < BOARD_SIZE; y++)
-  {
-    for (int x = 0; x < BOARD_SIZE; x++)
-    {
-      move.set(x,y);
-      if (game_state.is_legal(move) == LEGAL_MOVE
-       && !game_state.is_eye(move, game_state.to_play))
-      {
-        MCTSNode* child_node = NULL;
-        if (!(child_node = new MCTSNode(game_state)))
-        {
-          std::cout << "Out of memory" << std::endl;
-          exit(1);
-        }
-        child_node->parent_node = this;
-        child_node->game_state.play_move(move);
-        child_node->current_move = move;
-        children.push_back(child_node);
-      }
-    }
-  }
-  move.set(-1,-1);
   MCTSNode* child_node = NULL;
-  if (!(child_node = new MCTSNode(game_state)))
+  Coordinate move;
+  int move_index;
+  bool child_created = false;
+  while (!child_created && !potential_children.empty())
   {
-    std::cout << "Out of memory" << std::endl;
-    exit(1);
+    child_created = true;
+    move_index = rand() % potential_children.size();
+    move = potential_children[move_index];
+    if (game_state.is_legal(move) != LEGAL_MOVE
+     || game_state.is_eye(move, game_state.to_play))
+    {
+      child_created = false;
+    }
+    else
+    {
+      if (!(child_node = new MCTSNode(game_state)))
+      {
+        std::cout << "Out of memory" << std::endl;
+        exit(1);
+      }
+      child_node->parent_node = this;
+      child_node->game_state.play_move(move);
+      child_node->potential_children = game_state.possible_moves;
+      child_node->current_move = move;
+      children.push_back(child_node);
+    }
+    potential_children.erase(potential_children.begin() + move_index);
   }
-  child_node->parent_node = this;
-  child_node->game_state.play_move(move);
-  child_node->current_move = move;
-  children.push_back(child_node);
+  if (potential_children.empty())
+  {
+    is_leaf = false;
+    // If there were no legal moves from this position, then return the
+    // current node as the leaf node.
+    if (!child_created) { return this; }
+  }
+  return child_node;
 }
 
 double MCTSNode::get_uct(MCTSNode* node)

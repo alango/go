@@ -4,8 +4,14 @@ MCTSPlayer::MCTSPlayer()
 {
   GameState game_state;
   current_node = new MCTSNode(game_state);
-  current_node->expand();
-  simulations_per_turn = 5000;
+  current_node->potential_children = game_state.possible_moves;
+  MCTSNode* new_node;
+  for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+  {
+    new_node = current_node->expand();
+    new_node->simulate_and_update();
+  }
+  simulations_per_turn = 10000;
 }
 
 MCTSPlayer::~MCTSPlayer() {}
@@ -23,8 +29,8 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   {
     if (i%500==0) {std::cout<<i<<std::endl;}
     MCTSNode* leaf = current_node->descend_to_leaf();
-    leaf->expand();
-    leaf->simulate_and_update();
+    MCTSNode* new_node = leaf->expand();
+    new_node->simulate_and_update();
   }
   current_node->print();
   current_node->print_visit_map();

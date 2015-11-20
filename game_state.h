@@ -40,6 +40,8 @@ public:
   bool one_pass;
   bool game_over;
   list_of_points game_record;
+  // possible_moves are the empty points on the board, which may
+  // include eyes or illegal moves.
   list_of_points possible_moves;
 
 public:
