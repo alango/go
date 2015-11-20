@@ -31,6 +31,7 @@ public:
   MCTSGameState game_state;
   MCTSNode* parent_node;
   Coordinate current_move;
+  static Coordinate pass;
 public:
   MCTSNode(GameState game_state);
   ~MCTSNode();

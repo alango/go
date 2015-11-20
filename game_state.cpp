@@ -318,6 +318,11 @@ void GameState::play_move(Coordinate move)
 
 is_legal_responses GameState::is_legal(Coordinate move)
 {
+  Coordinate pass(-1,-1);
+  if (move == pass)
+  {
+    return LEGAL_MOVE;
+  }
   bool capture_made = false;
   if (!point_on_board(move))
   {

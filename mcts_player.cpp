@@ -29,7 +29,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   current_node->print();
   current_node->print_visit_map();
   current_node->print_win_ratio_map();
-  current_node->print_uct_map();
+  // current_node->print_uct_map();
 
   if (current_node->wins / current_node->visits < 0.05)
   {
