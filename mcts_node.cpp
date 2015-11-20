@@ -263,6 +263,7 @@ MCTSNode* MCTSNode::expand()
       child_node->parent_node = this;
       child_node->game_state.play_move(move);
       child_node->potential_children = game_state.possible_moves;
+      child_node->potential_children.push_back(pass);
       child_node->current_move = move;
       children.push_back(child_node);
     }
