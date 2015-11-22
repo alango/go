@@ -54,6 +54,17 @@ GameState::GameState()
   one_pass = false;
   game_over = false;
   ko.set(-1,-1);
+
+  move.set(2,2);
+  handicap_points.push_back(move);
+  move.set(6,6);
+  handicap_points.push_back(move);
+  move.set(2,6);
+  handicap_points.push_back(move);
+  move.set(6,2);
+  handicap_points.push_back(move);
+  move.set(4,4);
+  handicap_points.push_back(move);
 }
 
 GameState::~GameState() {};
@@ -230,6 +241,16 @@ bool GameState::is_suicide(Coordinate move)
   set_point(move, EMPTY);
   if (liberties == 0) { return true; }
   else { return false; }
+}
+
+void GameState::place_handicap_stones(int handicap)
+{
+  Coordinate point;
+  for (int i = 0; i < handicap; i++)
+  {
+    point = handicap_points[i];
+    set_point(point, BLACK);
+  }
 }
 
 void GameState::play_move(Coordinate move)

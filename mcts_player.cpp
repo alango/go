@@ -1,25 +1,27 @@
 #include "mcts_player.h"
 
-MCTSPlayer::MCTSPlayer()
-{
-  GameState game_state;
-  current_node = new MCTSNode(game_state);
-  current_node->potential_children = game_state.possible_moves;
-  MCTSNode* new_node;
-  for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
-  {
-    new_node = current_node->expand();
-    new_node->simulate_and_update();
-  }
-  simulations_per_turn = 10000;
-}
+MCTSPlayer::MCTSPlayer():
+  current_node(NULL),
+  simulations_per_turn(5000)
+{}
 
 MCTSPlayer::~MCTSPlayer() {}
 
 Coordinate MCTSPlayer::get_move(GameState game_state)
 {
-  // Update the current node and delete unnecessary branches.
-  if (!game_state.game_record.empty())
+  // If there is no current_node, then initialise using the given game_state.
+  if (current_node == NULL)
+  {
+    current_node = new MCTSNode(game_state);
+    MCTSNode* new_node;
+    for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
+    {
+      new_node = current_node->expand();
+      new_node->simulate_and_update();
+    }
+  }
+  // Not the first move, so update the current node based on the last move.
+  else if (!game_state.game_record.empty())
   {
     Coordinate last_move = game_state.game_record.back();
     current_node = current_node->move(last_move);

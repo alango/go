@@ -75,6 +75,7 @@ MCTSNode::MCTSNode(GameState game_state):
   is_leaf(true),
   visits(0),
   wins(0),
+  potential_children(game_state.possible_moves),
   game_state(game_state),
   parent_node(NULL)
 {}

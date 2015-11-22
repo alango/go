@@ -43,10 +43,15 @@ public:
   // possible_moves are the empty points on the board, which may
   // include eyes or illegal moves.
   list_of_points possible_moves;
+  // The points where the first 5 handicap stone should be placed.
+  // Only correct for 9x9 boards.
+  list_of_points handicap_points;
 
 public:
   GameState();
   ~GameState();
+  // Places handicap stones on the board.
+  void place_handicap_stones(int handicap);
   // Place stone and update the board and game_state.
   void play_move(Coordinate move);
   // Prints the current state of the game.
