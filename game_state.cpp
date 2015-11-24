@@ -50,7 +50,7 @@ GameState::GameState()
     }
   }
   possible_moves.push_back(pass);
-  
+
   to_play = BLACK;
   other_player = WHITE;
   one_pass = false;
@@ -70,6 +70,8 @@ GameState::GameState()
 }
 
 GameState::~GameState() {};
+
+Coordinate GameState::pass(-1,-1);
 
 player GameState::get_point(Coordinate point)
 {
