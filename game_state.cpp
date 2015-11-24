@@ -49,6 +49,8 @@ GameState::GameState()
       possible_moves.push_back(move);
     }
   }
+  possible_moves.push_back(pass);
+  
   to_play = BLACK;
   other_player = WHITE;
   one_pass = false;

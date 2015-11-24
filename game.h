@@ -10,7 +10,7 @@ class Game
 {
 private:
   GameState game_state;
-  HumanPlayer black;
+  MCTSPlayer black;
   MCTSPlayer white;
 
 public:

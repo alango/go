@@ -31,4 +31,5 @@ void Game::turn()
   }
   move.print();
   game_state.play_move(move);
+  game_state.print_game_record();
 }

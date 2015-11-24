@@ -2,7 +2,7 @@
 
 MCTSPlayer::MCTSPlayer():
   current_node(NULL),
-  simulations_per_turn(5000)
+  simulations_per_turn(1000)
 {}
 
 MCTSPlayer::~MCTSPlayer() {}
@@ -29,7 +29,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   // Run MCTS steps.
   for (int i = 0; i < simulations_per_turn; i++)
   {
-    if (i%500==0) {std::cout<<i<<std::endl;}
+    if (i%1000==0) {std::cout<<i<<std::endl;}
     MCTSNode* leaf = current_node->descend_to_leaf();
     MCTSNode* new_node = leaf->expand();
     new_node->simulate_and_update();
@@ -39,7 +39,10 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   current_node->print_win_ratio_map();
   // current_node->print_uct_map();
 
-  if (current_node->wins / current_node->visits < 0.05)
+  // If the player is really far ahead or really far behind,
+  // then just finishe the game quickly.
+  if (current_node->wins / current_node->visits < 0.02
+   || current_node->wins / current_node->visits > 0.98)
   {
     simulations_per_turn = 500;
   }

@@ -77,7 +77,7 @@ public:
   // Returns 0 if a move is legal, and the appropriate response code otherwise.
   is_legal_responses is_legal(Coordinate move);
   // Checks if a point is a true eye or not for the player of the specified colour.
-  // if the colour is EMPTY, then it checks if the point is an eye for either player.
+  // If the colour is EMPTY, then it checks if the point is an eye for either player.
   bool is_eye(Coordinate point, player eye_colour);
   // Checks if a game is finished. A game ends when the only empty points remaining
   // on the board are true eyes.

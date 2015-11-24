@@ -96,6 +96,7 @@ void MCTSNode::print()
 {
   std::cout << "Visits: " << visits << std::endl;
   std::cout << "Wins: " << wins << std::endl;
+  std::cout << "Win ratio: " << wins / visits << std::endl;
   std::cout << "Leaf node: " << is_leaf << std::endl;
   std::cout << "Number of children: " << children.size() << std::endl;
   game_state.print();
@@ -263,8 +264,7 @@ MCTSNode* MCTSNode::expand()
       }
       child_node->parent_node = this;
       child_node->game_state.play_move(move);
-      child_node->potential_children = game_state.possible_moves;
-      child_node->potential_children.push_back(pass);
+      // child_node->potential_children = game_state.possible_moves;
       child_node->current_move = move;
       children.push_back(child_node);
     }
@@ -362,7 +362,7 @@ void MCTSNode::simulate_and_update()
 
 MCTSNode* MCTSNode::move(Coordinate move)
 {
-  MCTSNode* new_current_node;
+  MCTSNode* new_current_node = NULL;
   for (std::vector<MCTSNode*>::iterator child = children.begin();
        child != children.end();
        child++)
@@ -376,6 +376,17 @@ MCTSNode* MCTSNode::move(Coordinate move)
       new_current_node = *child;
       new_current_node->parent_node = NULL;
     }
+  }
+  if (new_current_node == NULL)
+  {
+    if (!(new_current_node = new MCTSNode(game_state)))
+    {
+      std::cout << "Out of memory" << std::endl;
+      exit(1);
+    }
+    new_current_node->parent_node = NULL;
+    new_current_node->game_state.play_move(move);
+    new_current_node->current_move = move;
   }
   return new_current_node;
 }
