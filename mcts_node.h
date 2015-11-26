@@ -50,9 +50,9 @@ public:
   // returning a pointer to it.
   MCTSNode* expand();
   // Returns the UCT value for the given node.
-  double get_uct(MCTSNode* node);
+  double get_node_score(MCTSNode* node);
   // Compares the UCT values between two nodes. Used by select_child();
-  bool compare_uct(MCTSNode* node1, MCTSNode* node2);
+  bool compare_node_scores(MCTSNode* node1, MCTSNode* node2);
   // Selects the child node with the highest UCT value.
   MCTSNode* select_child();
   // Selects the move which has been most visited.
@@ -78,6 +78,7 @@ public:
   MCRAVENode(GameState game_state);
   MCRAVENode* create_child(Coordinate move);
   void simulate_and_update();
+  double get_node_score(MCRAVENode* node);
   void rave_update(bool win, list_of_points game_record);
 };
 

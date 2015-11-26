@@ -122,7 +122,7 @@ void MCTSNode::print_uct_map()
        child != children.end();
        child++)
   {
-    uct = get_uct(*child);
+    uct = get_node_score(*child);
     current_move = (*child)->current_move;
     if (current_move == pass)
     {
@@ -286,17 +286,17 @@ MCTSNode* MCTSNode::expand()
   return child_node;
 }
 
-double MCTSNode::get_uct(MCTSNode* node)
+double MCTSNode::get_node_score(MCTSNode* node)
 {
   if (node->visits == 0) { return 1000; }
   double ans = (node->wins/node->visits) + sqrt(log(2*visits)/node->visits);
   return ans;
 }
 
-bool MCTSNode::compare_uct(MCTSNode* node1, MCTSNode* node2)
+bool MCTSNode::compare_node_scores(MCTSNode* node1, MCTSNode* node2)
 // Returns true if node1 has a lower UCT value than node2.
 {
-  if (get_uct(node1) < get_uct(node2)) { return true; }
+  if (get_node_score(node1) < get_node_score(node2)) { return true; }
   else { return false; }
 }
 
@@ -307,7 +307,7 @@ MCTSNode* MCTSNode::select_child()
        child != children.end();
        child++)
   {
-    if (compare_uct(best, *child))
+    if (compare_node_scores(best, *child))
     {
       best = *child;
     }
@@ -432,6 +432,13 @@ void MCRAVENode::simulate_and_update()
   {
     rave_update(false, game_state.game_record);
   }
+}
+
+double MCRAVENode::get_node_score(MCRAVENode* node)
+{
+  if (node->visits == 0) { return 1000; }
+  double ans = (node->rave_wins/node->rave_visits) + sqrt(log(2*rave_visits)/node->rave_visits);
+  return ans;
 }
 
 void MCRAVENode::rave_update(bool win, list_of_points game_record)

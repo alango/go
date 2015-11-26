@@ -64,6 +64,9 @@ MCRAVEPlayer::MCRAVEPlayer()
   simulations_per_turn = 3000;
 }
 
+MCRAVEPlayer::~MCRAVEPlayer()
+{}
+
 void MCRAVEPlayer::initialise_current_node(GameState game_state)
 {
   current_node = new MCTSNode(game_state);
