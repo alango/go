@@ -239,9 +239,24 @@ void MCTSNode::print_win_ratio_map()
   std::cout << std::endl;
 }
 
-MCTSNode* MCTSNode::expand()
+MCTSNode* MCTSNode::create_child(Coordinate move)
 {
   MCTSNode* child_node = NULL;
+  if (!(child_node = new MCTSNode(game_state)))
+  {
+    std::cout << "Out of memory" << std::endl;
+    exit(1);
+  }
+  child_node->parent_node = this;
+  child_node->game_state.play_move(move);
+  child_node->current_move = move;
+  children.push_back(child_node);
+  return child_node;
+}
+
+MCTSNode* MCTSNode::expand()
+{
+  MCTSNode* child_node;
   Coordinate move;
   int move_index;
   bool child_created = false;
@@ -257,16 +272,7 @@ MCTSNode* MCTSNode::expand()
     }
     else
     {
-      if (!(child_node = new MCTSNode(game_state)))
-      {
-        std::cout << "Out of memory" << std::endl;
-        exit(1);
-      }
-      child_node->parent_node = this;
-      child_node->game_state.play_move(move);
-      // child_node->potential_children = game_state.possible_moves;
-      child_node->current_move = move;
-      children.push_back(child_node);
+      child_node = create_child(move);
     }
     potential_children.erase(potential_children.begin() + move_index);
   }
@@ -389,4 +395,80 @@ MCTSNode* MCTSNode::move(Coordinate move)
     new_current_node->current_move = move;
   }
   return new_current_node;
+}
+
+MCRAVENode::MCRAVENode(GameState game_state):
+  MCTSNode(game_state),
+  rave_visits(0),
+  rave_wins(0)
+{}
+
+MCRAVENode* MCRAVENode::create_child(Coordinate move)
+{
+  MCRAVENode* child_node = NULL;
+  if (!(child_node = new MCRAVENode(game_state)))
+  {
+    std::cout << "Out of memory" << std::endl;
+    exit(1);
+  }
+  child_node->parent_node = this;
+  child_node->game_state.play_move(move);
+  child_node->current_move = move;
+  children.push_back(child_node);
+  return child_node;
+}
+
+void MCRAVENode::simulate_and_update()
+{
+  int result = game_state.simulate_game();
+  // Simulate a game and check if it is win for the player who played
+  // the last move.
+  if ((result > 0 && game_state.other_player == BLACK)
+   || (result < 0 && game_state.other_player == WHITE))
+  {
+    rave_update(true, game_state.game_record);
+  }
+  else
+  {
+    rave_update(false, game_state.game_record);
+  }
+}
+
+void MCRAVENode::rave_update(bool win, list_of_points game_record)
+{
+  // Update normal counts for current node.
+  if (win) { wins++; }
+  visits++;
+  
+  // Update AMAF counts for any child nodes.
+  if (!is_leaf)
+  {
+    int move_number = game_state.game_record.size();
+    for (list_of_points::iterator move = game_record.begin() + move_number;
+         !(*move == pass);
+         move += 2)
+    {
+      // Check if the move has previously been played.
+      if (std::find(game_record.begin() + move_number, move-1, *move) == move-1)
+      {
+        // Update AMAF values for the corresponding child node.
+        for (std::vector<MCTSNode*>::iterator child = children.begin();
+             child != children.end();
+             child++)
+        {
+          if (*move == (*child)->current_move)
+          {
+            if (!win) { rave_wins++; }
+            rave_visits++;
+          }
+        }
+      }
+    }
+  }
+  if (parent_node != NULL)
+  {
+    // A win for the current node is a loss for the parent
+    // node and vice versa.
+    parent_node->rave_update(!win, game_record);
+  }
 }

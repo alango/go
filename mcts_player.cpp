@@ -2,23 +2,29 @@
 
 MCTSPlayer::MCTSPlayer():
   current_node(NULL),
-  simulations_per_turn(1000)
+  simulations_per_turn(3000)
 {}
 
 MCTSPlayer::~MCTSPlayer() {}
+
+void MCTSPlayer::initialise_current_node(GameState game_state)
+{
+  current_node = new MCTSNode(game_state);
+}
+
+void MCTSPlayer::run_step()
+{
+  MCTSNode* leaf = current_node->descend_to_leaf();
+  MCTSNode* new_node = leaf->expand();
+  new_node->simulate_and_update();
+}
 
 Coordinate MCTSPlayer::get_move(GameState game_state)
 {
   // If there is no current_node, then initialise using the given game_state.
   if (current_node == NULL)
   {
-    current_node = new MCTSNode(game_state);
-    MCTSNode* new_node;
-    for (int i = 0; i < BOARD_SIZE*BOARD_SIZE; i++)
-    {
-      new_node = current_node->expand();
-      new_node->simulate_and_update();
-    }
+    initialise_current_node(game_state);
   }
   // Not the first move, so update the current node based on the last move.
   else if (!game_state.game_record.empty())
@@ -30,9 +36,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   for (int i = 0; i < simulations_per_turn; i++)
   {
     if (i%1000==0) {std::cout<<i<<std::endl;}
-    MCTSNode* leaf = current_node->descend_to_leaf();
-    MCTSNode* new_node = leaf->expand();
-    new_node->simulate_and_update();
+    run_step();
   }
   current_node->print();
   current_node->print_visit_map();
@@ -53,4 +57,21 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   current_node = current_node->move(move);
 
   return move;
+}
+
+MCRAVEPlayer::MCRAVEPlayer()
+{
+  simulations_per_turn = 3000;
+}
+
+void MCRAVEPlayer::initialise_current_node(GameState game_state)
+{
+  current_node = new MCTSNode(game_state);
+}
+
+void MCRAVEPlayer::run_step()
+{
+  MCRAVENode* leaf = (MCRAVENode*) current_node->descend_to_leaf();
+  MCRAVENode* new_node = (MCRAVENode*) leaf->expand();
+  new_node->simulate_and_update();
 }

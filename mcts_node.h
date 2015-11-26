@@ -44,6 +44,8 @@ public:
   void print_visit_map();
   // Print the board with the win ration for each move.
   void print_win_ratio_map();
+  // Create a new node with another move played.
+  MCTSNode* create_child(Coordinate move);
   // Randomly chooses a move and creates the corresponding child node,
   // returning a pointer to it.
   MCTSNode* expand();
@@ -64,6 +66,19 @@ public:
   // Deletes all the child branches except the one with the specified next
   // move, and returns a pointer to the remaining branch.
   MCTSNode* move(Coordinate move);
+};
+
+class MCRAVENode : public MCTSNode
+{
+private:
+  double rave_visits;
+  double rave_wins;
+  MCRAVENode* parent_node;
+public:
+  MCRAVENode(GameState game_state);
+  MCRAVENode* create_child(Coordinate move);
+  void simulate_and_update();
+  void rave_update(bool win, list_of_points game_record);
 };
 
 #endif
