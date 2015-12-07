@@ -13,9 +13,9 @@ public:
   MCTSPlayer();
   ~MCTSPlayer();
   // Initialises an MCTSNode if no current_node exists.
-  void initialise_current_node(GameState game_state);
+  virtual void initialise_current_node(GameState game_state);
   // Runs a single simulation and update.
-  void run_step();
+  virtual void run_step();
   Coordinate get_move(GameState game_state);
 };
 
@@ -24,8 +24,8 @@ class MCRAVEPlayer: public MCTSPlayer
 public:
   MCRAVEPlayer();
   ~MCRAVEPlayer();
-  void initialise_current_node(GameState game_state);
-  void run_step();
+  virtual void initialise_current_node(GameState game_state);
+  virtual void run_step();
 };
 
 #endif

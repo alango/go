@@ -49,7 +49,6 @@ GameState::GameState()
       possible_moves.push_back(move);
     }
   }
-  possible_moves.push_back(pass);
 
   to_play = BLACK;
   other_player = WHITE;
@@ -255,6 +254,7 @@ void GameState::place_handicap_stones(int handicap)
     point = handicap_points[i];
     set_point(point, BLACK);
   }
+  play_move(pass);
 }
 
 void GameState::play_move(Coordinate move)

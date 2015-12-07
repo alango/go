@@ -102,6 +102,13 @@ void MCTSNode::print()
   game_state.print();
 }
 
+void MCTSNode::print_maps()
+{
+  print();
+  print_visit_map();
+  print_win_ratio_map();
+}
+
 void MCTSNode::print_uct_map()
 {
   double board[BOARD_SIZE][BOARD_SIZE];
@@ -256,7 +263,7 @@ MCTSNode* MCTSNode::create_child(Coordinate move)
 
 MCTSNode* MCTSNode::expand()
 {
-  MCTSNode* child_node;
+  MCTSNode* child_node = NULL;
   Coordinate move;
   int move_index;
   bool child_created = false;
@@ -276,13 +283,13 @@ MCTSNode* MCTSNode::expand()
     }
     potential_children.erase(potential_children.begin() + move_index);
   }
-  if (potential_children.empty())
+  if (potential_children.empty() && !children.empty())
   {
     is_leaf = false;
     // If there were no legal moves from this position, then return the
     // current node as the leaf node.
-    if (!child_created) { return this; }
   }
+  if (!child_created) { return this; }
   return child_node;
 }
 
@@ -358,7 +365,13 @@ void MCTSNode::update(bool win)
 
 void MCTSNode::simulate_and_update()
 {
-  int result = game_state.simulate_game();
+  // Create a copy of the current game_state to run the simulation on.
+  MCTSGameState playout_game_state = game_state;
+  while (!playout_game_state.game_over)
+  {
+    playout_game_state.random_move();
+  }
+  int result = playout_game_state.score_game();
   // Simulate a game and check if it is win for the player who played
   // the last move.
   if (result > 0 && game_state.other_player == BLACK) { update(true); }
@@ -385,14 +398,8 @@ MCTSNode* MCTSNode::move(Coordinate move)
   }
   if (new_current_node == NULL)
   {
-    if (!(new_current_node = new MCTSNode(game_state)))
-    {
-      std::cout << "Out of memory" << std::endl;
-      exit(1);
-    }
+    new_current_node = create_child(move);
     new_current_node->parent_node = NULL;
-    new_current_node->game_state.play_move(move);
-    new_current_node->current_move = move;
   }
   return new_current_node;
 }
@@ -420,24 +427,28 @@ MCRAVENode* MCRAVENode::create_child(Coordinate move)
 
 void MCRAVENode::simulate_and_update()
 {
-  int result = game_state.simulate_game();
-  // Simulate a game and check if it is win for the player who played
-  // the last move.
+  // Create a copy of the current game_state to run the simulation on.
+  MCTSGameState playout_game_state = game_state;
+  while (!playout_game_state.game_over)
+  {
+    playout_game_state.random_move();
+  }
+  int result = playout_game_state.score_game();
   if ((result > 0 && game_state.other_player == BLACK)
    || (result < 0 && game_state.other_player == WHITE))
   {
-    rave_update(true, game_state.game_record);
+    rave_update(true, playout_game_state.game_record);
   }
   else
   {
-    rave_update(false, game_state.game_record);
+    rave_update(false, playout_game_state.game_record);
   }
 }
 
-double MCRAVENode::get_node_score(MCRAVENode* node)
+double MCRAVENode::get_node_score(MCTSNode* node)
 {
   if (node->visits == 0) { return 1000; }
-  double ans = (node->rave_wins/node->rave_visits) + sqrt(log(2*rave_visits)/node->rave_visits);
+  double ans = (((MCRAVENode*)node)->rave_wins/((MCRAVENode*)node)->rave_visits);
   return ans;
 }
 
@@ -450,32 +461,90 @@ void MCRAVENode::rave_update(bool win, list_of_points game_record)
   // Update AMAF counts for any child nodes.
   if (!is_leaf)
   {
-    int move_number = game_state.game_record.size();
-    for (list_of_points::iterator move = game_record.begin() + move_number;
-         !(*move == pass);
-         move += 2)
+    // The move number of the children of this node.
+    int move_number = game_state.game_record.size() + 1;
+    int current_move_number = move_number;
+    Coordinate move = game_record.at(current_move_number);
+    while (!(move == pass))
     {
       // Check if the move has previously been played.
-      if (std::find(game_record.begin() + move_number, move-1, *move) == move-1)
+      if (std::find(game_record.begin() + move_number,
+                    game_record.begin() + current_move_number,
+                    move) == game_record.begin() + current_move_number)
       {
         // Update AMAF values for the corresponding child node.
         for (std::vector<MCTSNode*>::iterator child = children.begin();
              child != children.end();
              child++)
         {
-          if (*move == (*child)->current_move)
+          if (move == (*child)->current_move)
           {
-            if (!win) { rave_wins++; }
-            rave_visits++;
+            if (!win) { ((MCRAVENode*)(*child))->rave_wins++; }
+            ((MCRAVENode*)(*child))->rave_visits++;
           }
         }
       }
+      current_move_number += 2;
+      move = game_record.at(current_move_number);
     }
   }
   if (parent_node != NULL)
   {
     // A win for the current node is a loss for the parent
     // node and vice versa.
-    parent_node->rave_update(!win, game_record);
+    ((MCRAVENode*)parent_node)->rave_update(!win, game_record);
   }
+}
+
+void MCRAVENode::print_maps()
+{
+  std::cout << "Printing RAVE maps" << std::endl;
+  MCTSNode::print_maps();
+  print_rave_wins_map();
+}
+
+void MCRAVENode::print_rave_wins_map()
+{
+  int board[BOARD_SIZE][BOARD_SIZE];
+  // Initialise board to all 0s.
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      board[row][col] = 0;
+    }
+  }
+
+  // For each child node, add the number of times wins that have been
+  // using AMAF to the board.
+  Coordinate current_move;
+  int passes;
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+       child != children.end();
+       child++)
+  {
+    MCRAVENode* mcrave_child = (MCRAVENode*) *child;
+    current_move = mcrave_child->current_move;
+    if (current_move == pass)
+    {
+      passes = mcrave_child->rave_wins;
+    }
+    else
+    {
+      board[current_move.y][current_move.x] = mcrave_child->rave_wins;
+    }
+  }
+
+  // Print the board.
+  std::cout << "RAVE win map: " << std::endl;
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      std::cout << board[row][col] << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << "Passes: " << passes << std::endl;
+  std::cout << std::endl;
 }

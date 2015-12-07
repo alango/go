@@ -2,7 +2,7 @@
 
 MCTSPlayer::MCTSPlayer():
   current_node(NULL),
-  simulations_per_turn(3000)
+  simulations_per_turn(1000)
 {}
 
 MCTSPlayer::~MCTSPlayer() {}
@@ -24,7 +24,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   // If there is no current_node, then initialise using the given game_state.
   if (current_node == NULL)
   {
-    initialise_current_node(game_state);
+    this->initialise_current_node(game_state);
   }
   // Not the first move, so update the current node based on the last move.
   else if (!game_state.game_record.empty())
@@ -38,13 +38,11 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
     if (i%1000==0) {std::cout<<i<<std::endl;}
     run_step();
   }
-  current_node->print();
-  current_node->print_visit_map();
-  current_node->print_win_ratio_map();
-  // current_node->print_uct_map();
+
+  current_node->print_maps();
 
   // If the player is really far ahead or really far behind,
-  // then just finishe the game quickly.
+  // then just finish the game quickly.
   if (current_node->wins / current_node->visits < 0.02
    || current_node->wins / current_node->visits > 0.98)
   {
@@ -61,7 +59,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
 
 MCRAVEPlayer::MCRAVEPlayer()
 {
-  simulations_per_turn = 3000;
+  simulations_per_turn = 1000;
 }
 
 MCRAVEPlayer::~MCRAVEPlayer()
@@ -69,7 +67,7 @@ MCRAVEPlayer::~MCRAVEPlayer()
 
 void MCRAVEPlayer::initialise_current_node(GameState game_state)
 {
-  current_node = new MCTSNode(game_state);
+  current_node = new MCRAVENode(game_state);
 }
 
 void MCRAVEPlayer::run_step()
