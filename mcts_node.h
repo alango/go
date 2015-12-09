@@ -81,7 +81,8 @@ public:
   virtual void simulate_and_update();
   virtual double get_node_score(MCTSNode* node);
   void rave_update(bool win, list_of_points game_record);
-  void print_rave_wins_map();
+  void print_rave_win_ratio_map();
+  void print_rave_visit_map();
   virtual void print_maps();
 };
 

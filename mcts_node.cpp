@@ -78,7 +78,12 @@ MCTSNode::MCTSNode(GameState game_state):
   potential_children(game_state.possible_moves),
   game_state(game_state),
   parent_node(NULL)
-{}
+{
+  if (!game_state.game_record.empty())
+  {
+    current_move = game_state.game_record.back();
+  }
+}
 
 Coordinate MCTSNode::pass(-1,-1);
 
@@ -124,7 +129,7 @@ void MCTSNode::print_uct_map()
   // For each child node, add its UCT value to the board.
   double uct;
   Coordinate current_move;
-  double pass_uct;
+  double pass_uct = 0;
   for (std::vector<MCTSNode*>::iterator child = children.begin();
        child != children.end();
        child++)
@@ -171,7 +176,7 @@ void MCTSNode::print_visit_map()
   // For each child node, add the number of times it has been
   // visited to the board.
   Coordinate current_move;
-  int passes;
+  int passes = 0;
   for (std::vector<MCTSNode*>::iterator child = children.begin();
        child != children.end();
        child++)
@@ -454,15 +459,20 @@ double MCRAVENode::get_node_score(MCTSNode* node)
 
 void MCRAVENode::rave_update(bool win, list_of_points game_record)
 {
-  // Update normal counts for current node.
-  if (win) { wins++; }
+  // Update normal and RAVE counts for current node.
+  if (win)
+  { 
+    wins++;
+    rave_wins++;
+  }
   visits++;
+  rave_visits++;
   
   // Update AMAF counts for any child nodes.
   if (!is_leaf)
   {
     // The move number of the children of this node.
-    int move_number = game_state.game_record.size() + 1;
+    int move_number = game_state.game_record.size();
     int current_move_number = move_number;
     Coordinate move = game_record.at(current_move_number);
     while (!(move == pass))
@@ -479,7 +489,10 @@ void MCRAVENode::rave_update(bool win, list_of_points game_record)
         {
           if (move == (*child)->current_move)
           {
-            if (!win) { ((MCRAVENode*)(*child))->rave_wins++; }
+            if (!win)
+            {
+              ((MCRAVENode*)(*child))->rave_wins++;
+            }
             ((MCRAVENode*)(*child))->rave_visits++;
           }
         }
@@ -500,10 +513,11 @@ void MCRAVENode::print_maps()
 {
   std::cout << "Printing RAVE maps" << std::endl;
   MCTSNode::print_maps();
-  print_rave_wins_map();
+  print_rave_win_ratio_map();
+  print_rave_visit_map();
 }
 
-void MCRAVENode::print_rave_wins_map()
+void MCRAVENode::print_rave_visit_map()
 {
   int board[BOARD_SIZE][BOARD_SIZE];
   // Initialise board to all 0s.
@@ -515,10 +529,10 @@ void MCRAVENode::print_rave_wins_map()
     }
   }
 
-  // For each child node, add the number of times wins that have been
-  // using AMAF to the board.
+  // For each child node, add the number of times it has been
+  // visited to the board.
   Coordinate current_move;
-  int passes;
+  int passes = 0;
   for (std::vector<MCTSNode*>::iterator child = children.begin();
        child != children.end();
        child++)
@@ -527,16 +541,16 @@ void MCRAVENode::print_rave_wins_map()
     current_move = mcrave_child->current_move;
     if (current_move == pass)
     {
-      passes = mcrave_child->rave_wins;
+      passes = mcrave_child->rave_visits;
     }
     else
     {
-      board[current_move.y][current_move.x] = mcrave_child->rave_wins;
+      board[current_move.y][current_move.x] = mcrave_child->rave_visits;
     }
   }
 
   // Print the board.
-  std::cout << "RAVE win map: " << std::endl;
+  std::cout << "Visit map: " << std::endl;
   for (int row = 0; row < BOARD_SIZE; row++)
   {
     for (int col = 0; col < BOARD_SIZE; col++)
@@ -546,5 +560,51 @@ void MCRAVENode::print_rave_wins_map()
     std::cout << std::endl;
   }
   std::cout << "Passes: " << passes << std::endl;
+  std::cout << std::endl;
+}
+
+void MCRAVENode::print_rave_win_ratio_map()
+{
+  double board[BOARD_SIZE][BOARD_SIZE];
+  // Initialise board to all 0s.
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      board[row][col] = 0;
+    }
+  }
+
+  // For each child node, add the number of times wins that have been
+  // using AMAF to the board.
+  double pass_win_ratio = 0;
+  Coordinate current_move;
+  for (std::vector<MCTSNode*>::iterator child = children.begin();
+       child != children.end();
+       child++)
+  {
+    MCRAVENode* mcrave_child = (MCRAVENode*) *child;
+    current_move = mcrave_child->current_move;
+    if (current_move == pass)
+    {
+      pass_win_ratio = mcrave_child->rave_wins / mcrave_child->rave_visits;
+    }
+    else
+    {
+      board[current_move.y][current_move.x] = mcrave_child->rave_wins / mcrave_child->rave_visits;
+    }
+  }
+
+  // Print the board.
+  std::cout << "RAVE win ratio map: " << std::endl;
+  std::cout << std::setprecision(2) << std::fixed;
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      std::cout << board[row][col] << " ";
+    }
+    std::cout << std::endl;
+  }
   std::cout << std::endl;
 }

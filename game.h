@@ -10,7 +10,7 @@ class Game
 {
 private:
   GameState game_state;
-  MCTSPlayer black;
+  MCRAVEPlayer black;
   MCRAVEPlayer white;
 
 public:
