@@ -43,11 +43,11 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
 
   // If the player is really far ahead or really far behind,
   // then just finish the game quickly.
-  // if (current_node->wins / current_node->visits < 0.02
-  //  || current_node->wins / current_node->visits > 0.98)
-  // {
-  //   simulations_per_turn = 500;
-  // }
+  if (current_node->wins / current_node->visits < 0.02
+   || current_node->wins / current_node->visits > 0.98)
+  {
+    simulations_per_turn = 2000;
+  }
 
   // Find move with most visits.
   Coordinate move = current_node->select_move();
@@ -59,7 +59,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
 
 MCRAVEPlayer::MCRAVEPlayer()
 {
-  simulations_per_turn = 2000;
+  simulations_per_turn = 10000;
 }
 
 MCRAVEPlayer::~MCRAVEPlayer()

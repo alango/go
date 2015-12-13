@@ -412,7 +412,8 @@ MCTSNode* MCTSNode::move(Coordinate move)
 MCRAVENode::MCRAVENode(GameState game_state):
   MCTSNode(game_state),
   rave_visits(0),
-  rave_wins(0)
+  rave_wins(0),
+  beta(0.8)
 {}
 
 MCRAVENode* MCRAVENode::create_child(Coordinate move)
@@ -453,8 +454,9 @@ void MCRAVENode::simulate_and_update()
 double MCRAVENode::get_node_score(MCTSNode* node)
 {
   if (node->visits == 0) { return 1000; }
-  double ans = (((MCRAVENode*)node)->rave_wins/((MCRAVENode*)node)->rave_visits);
-  return ans;
+  double mc_score = node->wins / node->visits;
+  double rave_score = (((MCRAVENode*)node)->rave_wins/((MCRAVENode*)node)->rave_visits);
+  return  (beta*rave_score) + ((1-beta)*mc_score) + (sqrt(log(2*visits)/node->visits));
 }
 
 void MCRAVENode::rave_update(bool win, list_of_points game_record)
