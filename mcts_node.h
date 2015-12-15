@@ -75,7 +75,7 @@ class MCRAVENode : public MCTSNode
 private:
   double rave_visits;
   double rave_wins;
-  double beta; // Parameter for MC vs RAVE weighting.
+  static double k; // Equivalence parameter for MC vs RAVE weighting.
 public:
   MCRAVENode(GameState game_state);
   virtual MCRAVENode* create_child(Coordinate move);

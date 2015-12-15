@@ -29,9 +29,6 @@ MCTSGameState::~MCTSGameState() {}
 
 void MCTSGameState::random_move()
 {
-  static double time_to_find_move = 0;
-  static double time_to_play_move = 0;
-  std::clock_t start = std::clock();
   Coordinate move;
   bool move_found = false;
   int move_index;
@@ -50,14 +47,9 @@ void MCTSGameState::random_move()
   {
     // No moves remaining so pass.
     move.set(-1,-1);
-    // std::cout << "Time to find move: " << time_to_find_move/(double)CLOCKS_PER_SEC << std::endl;
-    // std::cout << "Playing time: " << time_to_play_move/(double)CLOCKS_PER_SEC << std::endl;
   }
-  double found_move = std::clock();
-  time_to_find_move += found_move-start;
   play_move(move);
-  double move_played = std::clock();
-  time_to_play_move += move_played-found_move;
+
 }
 
 int MCTSGameState::simulate_game()
@@ -412,8 +404,7 @@ MCTSNode* MCTSNode::move(Coordinate move)
 MCRAVENode::MCRAVENode(GameState game_state):
   MCTSNode(game_state),
   rave_visits(0),
-  rave_wins(0),
-  beta(0.8)
+  rave_wins(0)
 {}
 
 MCRAVENode* MCRAVENode::create_child(Coordinate move)
@@ -430,6 +421,8 @@ MCRAVENode* MCRAVENode::create_child(Coordinate move)
   children.push_back(child_node);
   return child_node;
 }
+
+double MCRAVENode::k = 1000;
 
 void MCRAVENode::simulate_and_update()
 {
@@ -454,6 +447,7 @@ void MCRAVENode::simulate_and_update()
 double MCRAVENode::get_node_score(MCTSNode* node)
 {
   if (node->visits == 0) { return 1000; }
+  double beta = sqrt(k / ((3 * node->visits) + k));
   double mc_score = node->wins / node->visits;
   double rave_score = (((MCRAVENode*)node)->rave_wins/((MCRAVENode*)node)->rave_visits);
   return  (beta*rave_score) + ((1-beta)*mc_score) + (sqrt(log(2*visits)/node->visits));
@@ -552,7 +546,7 @@ void MCRAVENode::print_rave_visit_map()
   }
 
   // Print the board.
-  std::cout << "Visit map: " << std::endl;
+  std::cout << "RAVE visit map: " << std::endl;
   for (int row = 0; row < BOARD_SIZE; row++)
   {
     for (int col = 0; col < BOARD_SIZE; col++)

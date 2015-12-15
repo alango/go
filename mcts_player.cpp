@@ -59,7 +59,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
 
 MCRAVEPlayer::MCRAVEPlayer()
 {
-  simulations_per_turn = 10000;
+  simulations_per_turn = 8000;
 }
 
 MCRAVEPlayer::~MCRAVEPlayer()
