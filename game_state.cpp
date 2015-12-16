@@ -422,13 +422,15 @@ bool GameState::is_eye(Coordinate point, player eye_colour)
     }
   }
 
-  int diagonals_occupied = 0;
+  list_of_points diagonals_occupied;
   list_of_points diagonal_points = get_diagonal_points(point);
-  for (list_of_points::iterator diag = diagonal_points.begin(); diag != diagonal_points.end(); diag++)
+  for (list_of_points::iterator diag = diagonal_points.begin();
+       diag != diagonal_points.end();
+       diag++)
   {
     if (get_point(*diag) == colour)
     {
-      diagonals_occupied++;
+      diagonals_occupied.push_back(*diag);
     }
   }
 
@@ -436,19 +438,19 @@ bool GameState::is_eye(Coordinate point, player eye_colour)
   // If the point is not on the edge of the board, then at least 3 out of the 4
   // diagonal points must be occupied.
   {
-    if (diagonals_occupied >= 3) { return true; }
+    if (diagonals_occupied.size() >= 3) { return true; }
     else { return false; }
   }
   else if (diagonal_points.size() == 2)
   // If the point is on the edge of the board, then both diagonal points must be occupied.
   {
-    if (diagonals_occupied == 2) { return true; }
+    if (diagonals_occupied.size() == 2) { return true; }
     else { return false; }
   }
   else
   // If the point is on the corner of the board, then the diagonal point must be occupied.
   {
-    if (diagonals_occupied == 1) { return true; }
+    if (diagonals_occupied.size() == 1) { return true; }
     else { return false; }
   }
 }

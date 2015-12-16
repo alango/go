@@ -5,7 +5,7 @@ Game::Game()
 {
   black.set_colour(BLACK);
   white.set_colour(WHITE);
-  // game_state.place_handicap_stones(5);
+  game_state.place_handicap_stones(3);
   while (!game_state.game_over)
   {
     turn();
