@@ -168,6 +168,57 @@ void eye_test()
   move.set(4,5);
   assert(game.is_eye(move, EMPTY) == true);
 
+  move.set(7,0);
+  game.play_move(move);
+
+  move.set(2,6);
+  game.play_move(move);
+
+  move.set(8,1);
+  game.play_move(move);
+
+  move.set(3,7);
+  game.play_move(move);
+
+  move.set(6,1);
+  game.play_move(move);
+
+  move.set(2,7);
+  game.play_move(move);
+
+  // False eye in the middle.
+  move.set(3,6);
+  assert(game.is_eye(move, EMPTY) == false);
+
+  move.set(7,2);
+  game.play_move(move);
+
+  move.set(2,5);
+  game.play_move(move);
+
+  // Half eye connected to real eye in the middle.
+  move.set(3,6);
+  assert(game.is_eye(move, EMPTY) == true);
+
+  move.set(6,0);
+  game.play_move(move);
+
+  // Still not a half eye.
+  move.set(7,2);
+  assert(game.is_eye(move, EMPTY) == false);
+
+  move.set(8,8);
+  game.play_move(move);
+
+  move.set(8,2);
+  game.play_move(move);
+
+  // Connected half eyes.
+  move.set(8,0);
+  assert(game.is_eye(move, EMPTY) == true);
+  move.set(7,1);
+  assert(game.is_eye(move, EMPTY) == true);
+
   std::cout << "Eye test passed" << std::endl;
 }
 
