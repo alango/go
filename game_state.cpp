@@ -422,15 +422,15 @@ bool GameState::is_eye(Coordinate point, player eye_colour)
     }
   }
 
-  list_of_points diagonals_occupied;
+  list_of_points unoccupied_diagonals;
   list_of_points diagonal_points = get_diagonal_points(point);
   for (list_of_points::iterator diag = diagonal_points.begin();
        diag != diagonal_points.end();
        diag++)
   {
-    if (get_point(*diag) == colour)
+    if (get_point(*diag) != colour)
     {
-      diagonals_occupied.push_back(*diag);
+      unoccupied_diagonals.push_back(*diag);
     }
   }
 
@@ -438,21 +438,110 @@ bool GameState::is_eye(Coordinate point, player eye_colour)
   // If the point is not on the edge of the board, then at least 3 out of the 4
   // diagonal points must be occupied.
   {
-    if (diagonals_occupied.size() >= 3) { return true; }
-    else { return false; }
+    if (unoccupied_diagonals.size() <= 1)
+    {
+      return true;
+    }
+    else if (unoccupied_diagonals.size() == 2)
+    {
+      if (connected_half_eyes(colour, unoccupied_diagonals))
+      {
+        return true;
+      }
+    }
   }
   else if (diagonal_points.size() == 2)
   // If the point is on the edge of the board, then both diagonal points must be occupied.
   {
-    if (diagonals_occupied.size() == 2) { return true; }
-    else { return false; }
+    if (unoccupied_diagonals.size() == 0)
+    {
+      return true;
+    }
+    else if (unoccupied_diagonals.size() == 1)
+    {
+      if (connected_half_eyes(colour, unoccupied_diagonals))
+      {
+        return true;
+      }
+    }
   }
   else
   // If the point is on the corner of the board, then the diagonal point must be occupied.
   {
-    if (diagonals_occupied.size() == 1) { return true; }
-    else { return false; }
+    if (unoccupied_diagonals.size() == 0)
+    {
+      return true;
+    }
+    else
+    {
+      if (connected_half_eyes(colour, unoccupied_diagonals))
+      {
+        return true;
+      }
+    }
   }
+  return false;
+}
+
+bool GameState::connected_half_eyes(player colour, list_of_points unoccupied_diagonals)
+{
+  for (list_of_points::iterator point = unoccupied_diagonals.begin();
+       point != unoccupied_diagonals.end();
+       point++)
+  {
+    list_of_points adjacent_points = get_adjacent_points(*point);
+    bool possible_eye = true;
+    // First check that adjacent points are occupied.
+    for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
+    {
+      if (get_point(*adj) != colour)
+      {
+        // Adjacent points empty or wrong colour.
+        possible_eye = false;
+      }
+    }
+
+    if (possible_eye)
+    {
+      // If all adjacent points are occupied, check how many diagonal points are occupied.
+      list_of_points diagonal_points = get_diagonal_points(*point);
+      int diagonals_occupied = 0;
+      for (list_of_points::iterator diag = diagonal_points.begin();
+           diag != diagonal_points.end();
+           diag++)
+      {
+        if (get_point(*diag) == colour)
+        {
+          diagonals_occupied++;
+        }
+      }
+
+      if (diagonal_points.size() == 4)
+      // If the point is not on the edge of the board, then at least 2 out of the 4
+      // diagonal points must be occupied for the point to be a false eye
+      {
+        if (diagonals_occupied >= 2)
+        {
+          return true;
+        }
+      }
+      else if (diagonal_points.size() == 2)
+      // If the point is on the edge of the board, then at leastone of the diagonal points
+      // must be occupied.
+      {
+        if (diagonals_occupied >= 1)
+        {
+          return true;
+        }
+      }
+      else
+      // If the point is on the corner of the board, then the point must be a false eye.
+      {
+          return true;
+      }
+    }
+  }
+  return false;
 }
 
 bool GameState::game_finished()

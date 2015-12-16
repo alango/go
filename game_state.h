@@ -86,6 +86,12 @@ public:
   // Returns the difference between black and white's scores. Only guaranteed to
   // work if game_finished returns true.
   int score_game();
+
+private:
+  // Helper function for is_eye to detect if a group is alive through
+  // connected half eyes. Takes a list of points, and return true if any
+  // of them are real or half eyes for the specified player.
+  bool connected_half_eyes(player colour, list_of_points unoccupied_diagonals);
 };
 
 #endif
