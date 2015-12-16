@@ -116,7 +116,9 @@ void eye_test()
 
   move.set(0,1);
   game.play_move(move);
+
   // False eye in the corner.
+  move.set(0,0);
   assert(game.is_eye(move, EMPTY) == false);
 
   move.set(5,5);

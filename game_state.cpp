@@ -491,6 +491,10 @@ bool GameState::connected_half_eyes(player colour, list_of_points unoccupied_dia
   {
     list_of_points adjacent_points = get_adjacent_points(*point);
     bool possible_eye = true;
+    if (get_point(*point) != EMPTY)
+    {
+      possible_eye = false;
+    }
     // First check that adjacent points are occupied.
     for (list_of_points::iterator adj = adjacent_points.begin(); adj != adjacent_points.end(); adj++)
     {
