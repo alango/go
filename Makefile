@@ -8,6 +8,7 @@ SOURCES = game_state.cpp \
           random_player.cpp \
           mcts_node.cpp \
           mcts_player.cpp \
+          print_methods.cpp \
           test.cpp main.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
