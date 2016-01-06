@@ -4,7 +4,6 @@
 #include "game.h"
 #include "game_state.h"
 #include "player.h"
-#include "human_player.h"
 #include "mcts_player.h"
 #include "test.h"
 

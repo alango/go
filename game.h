@@ -2,8 +2,7 @@
 #define GAME_H
 
 #include "game_state.h"
-#include "human_player.h"
-#include "random_player.h"
+#include "player.h"
 #include "mcts_player.h"
 
 class Game

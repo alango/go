@@ -4,8 +4,7 @@ CFLAGS = -Wall -c $(DEBUG)
 LFLAGS = -Wall $(DEBUG)
 SOURCES = game_state.cpp \
           game.cpp \
-          human_player.cpp \
-          random_player.cpp \
+          player.cpp \
           mcts_node.cpp \
           mcts_player.cpp \
           print_methods.cpp \
