@@ -46,7 +46,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   if (current_node->wins / current_node->visits < 0.02
    || current_node->wins / current_node->visits > 0.98)
   {
-    simulations_per_turn = 2000;
+    simulations_per_turn = 1000;
   }
 
   // Find move with most visits.

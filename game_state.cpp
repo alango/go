@@ -616,7 +616,9 @@ void GameState::print()
 
 void GameState::print_game_record()
 {  
-  for (list_of_points::iterator move = game_record.begin(); move != game_record.end(); move++)
+  for (list_of_points::iterator move = game_record.begin();
+       move != game_record.end();
+       move++)
   {
     move->print();
   }
