@@ -14,10 +14,13 @@ public:
   MCTSGameState(GameState game_state);
   ~MCTSGameState();
   // Plays out a random game from the current position to the end and
-  // returns black's score - white's score.
-  int simulate_game();
-  // Selects a random, legal move and plays it.
-  void random_move();
+  // returns the final game_state.
+  GameState simulate_game();
+  // Selects a random, legal move.
+  Coordinate select_random_move();
+  // Selects n random moves and plays the one with the highest heuristic
+  // value.
+  // void best_of_n_move();
 };
 
 class MCTSNode

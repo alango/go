@@ -35,7 +35,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   // Run MCTS steps.
   for (int i = 0; i < simulations_per_turn; i++)
   {
-    if (i%1000==0) {std::cout<<i<<std::endl;}
+    if (i%500==0) {std::cout<<i<<std::endl;}
     run_step();
   }
 
@@ -59,7 +59,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
 
 MCRAVEPlayer::MCRAVEPlayer()
 {
-  simulations_per_turn = 8000;
+  simulations_per_turn = 2000;
 }
 
 MCRAVEPlayer::~MCRAVEPlayer()
@@ -71,6 +71,26 @@ void MCRAVEPlayer::initialise_current_node(GameState game_state)
 }
 
 void MCRAVEPlayer::run_step()
+{
+  MCRAVENode* leaf = (MCRAVENode*) current_node->descend_to_leaf();
+  MCRAVENode* new_node = (MCRAVENode*) leaf->expand();
+  new_node->simulate_and_update();
+}
+
+HeuristicsPlayer::HeuristicsPlayer()
+{
+  simulations_per_turn = 8000;
+}
+
+HeuristicsPlayer::~HeuristicsPlayer()
+{}
+
+void HeuristicsPlayer::initialise_current_node(GameState game_state)
+{
+  // current_node = new HeuristicsNode(game_state);
+}
+
+void HeuristicsPlayer::run_step()
 {
   MCRAVENode* leaf = (MCRAVENode*) current_node->descend_to_leaf();
   MCRAVENode* new_node = (MCRAVENode*) leaf->expand();

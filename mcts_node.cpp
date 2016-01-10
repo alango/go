@@ -27,7 +27,7 @@ MCTSGameState::MCTSGameState(GameState game_state)
 
 MCTSGameState::~MCTSGameState() {}
 
-void MCTSGameState::random_move()
+Coordinate MCTSGameState::select_random_move()
 {
   Coordinate move;
   bool move_found = false;
@@ -48,19 +48,25 @@ void MCTSGameState::random_move()
     // No moves remaining so pass.
     move.set(-1,-1);
   }
-  play_move(move);
-
+  return move;
 }
 
-int MCTSGameState::simulate_game()
+// void MCTSGameState::best_of_n_move()
+// {
+//   Coordinate move;
+
+// }
+
+GameState MCTSGameState::simulate_game()
 {
   // Create a copy of the current game_state to run the simulation on.
   MCTSGameState playout_game_state = *this;
   while (!playout_game_state.game_over)
   {
-    playout_game_state.random_move();
+    Coordinate move = playout_game_state.select_random_move();
+    playout_game_state.play_move(move);
   }
-  return playout_game_state.score_game();
+  return playout_game_state;
 }
 
 MCTSNode::MCTSNode(GameState game_state):
@@ -209,13 +215,7 @@ void MCTSNode::update(bool win)
 
 void MCTSNode::simulate_and_update()
 {
-  // Create a copy of the current game_state to run the simulation on.
-  MCTSGameState playout_game_state = game_state;
-  while (!playout_game_state.game_over)
-  {
-    playout_game_state.random_move();
-  }
-  int result = playout_game_state.score_game();
+  int result = game_state.simulate_game().score_game();
   // Simulate a game and check if it is win for the player who played
   // the last move.
   if (result > 0 && game_state.other_player == BLACK) { update(true); }
@@ -273,21 +273,17 @@ double MCRAVENode::k = 1000;
 
 void MCRAVENode::simulate_and_update()
 {
-  // Create a copy of the current game_state to run the simulation on.
-  MCTSGameState playout_game_state = game_state;
-  while (!playout_game_state.game_over)
-  {
-    playout_game_state.random_move();
-  }
-  int result = playout_game_state.score_game();
+  GameState result_game_state = game_state.simulate_game();
+  int result = result_game_state.score_game();
+  list_of_points game_record = result_game_state.game_record;
   if ((result > 0 && game_state.other_player == BLACK)
    || (result < 0 && game_state.other_player == WHITE))
   {
-    rave_update(true, playout_game_state.game_record);
+    rave_update(true, game_record);
   }
   else
   {
-    rave_update(false, playout_game_state.game_record);
+    rave_update(false, game_record);
   }
 }
 
