@@ -28,12 +28,4 @@ public:
   virtual void run_step();
 };
 
-class HeuristicsPlayer: public MCRAVEPlayer
-{
-  HeuristicsPlayer();
-  ~HeuristicsPlayer();
-  virtual void initialise_current_node(GameState game_state);
-  virtual void run_step();
-};
-
 #endif

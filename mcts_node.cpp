@@ -51,11 +51,38 @@ Coordinate MCTSGameState::select_random_move()
   return move;
 }
 
-// void MCTSGameState::best_of_n_move()
-// {
-//   Coordinate move;
+Coordinate MCTSGameState::best_of_n_move()
+{
+  Coordinate best_move(-1,-1);
+  int best_score = -100;
+  Coordinate current_move;
+  int current_score;
+  for (int i=0; i<BEST_OF_N; i++)
+  {
+    current_move = select_random_move();
+    current_score = heuristic_score(current_move);
+    if (current_score > best_score)
+    {
+      best_score = current_score;
+      best_move = current_move;
+    }
+  }
+  return best_move;
+}
 
-// }
+int MCTSGameState::heuristic_score(Coordinate move)
+{
+  int score = 0;
+  // Pass receives the lowest score.
+  if (move == pass) { return -100; }
+  // Penalise moves on the first two lines.
+  else if (move.x <= 1 || move.y <= 1 ||
+           move.x >= BOARD_SIZE-2 || move.y >= BOARD_SIZE-2)
+  {
+    score -= 5;
+  }
+  return score;
+}
 
 GameState MCTSGameState::simulate_game()
 {
@@ -64,6 +91,18 @@ GameState MCTSGameState::simulate_game()
   while (!playout_game_state.game_over)
   {
     Coordinate move = playout_game_state.select_random_move();
+    playout_game_state.play_move(move);
+  }
+  return playout_game_state;
+}
+
+GameState MCTSGameState::heavy_simulate_game()
+{
+  // Create a copy of the current game_state to run the simulation on.
+  MCTSGameState playout_game_state = *this;
+  while (!playout_game_state.game_over)
+  {
+    Coordinate move = playout_game_state.best_of_n_move();
     playout_game_state.play_move(move);
   }
   return playout_game_state;
@@ -273,7 +312,8 @@ double MCRAVENode::k = 1000;
 
 void MCRAVENode::simulate_and_update()
 {
-  GameState result_game_state = game_state.simulate_game();
+  // GameState result_game_state = game_state.simulate_game();
+  GameState result_game_state = game_state.heavy_simulate_game();
   int result = result_game_state.score_game();
   list_of_points game_record = result_game_state.game_record;
   if ((result > 0 && game_state.other_player == BLACK)

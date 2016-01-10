@@ -76,23 +76,3 @@ void MCRAVEPlayer::run_step()
   MCRAVENode* new_node = (MCRAVENode*) leaf->expand();
   new_node->simulate_and_update();
 }
-
-HeuristicsPlayer::HeuristicsPlayer()
-{
-  simulations_per_turn = 8000;
-}
-
-HeuristicsPlayer::~HeuristicsPlayer()
-{}
-
-void HeuristicsPlayer::initialise_current_node(GameState game_state)
-{
-  // current_node = new HeuristicsNode(game_state);
-}
-
-void HeuristicsPlayer::run_step()
-{
-  MCRAVENode* leaf = (MCRAVENode*) current_node->descend_to_leaf();
-  MCRAVENode* new_node = (MCRAVENode*) leaf->expand();
-  new_node->simulate_and_update();
-}

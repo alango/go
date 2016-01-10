@@ -4,6 +4,8 @@
 #include <vector>
 #include "game_state.h"
 
+#define BEST_OF_N 10
+
 class MCTSGameState : public GameState
 // A derived class of GameState containing extra methods for use
 // during MCTS.
@@ -16,11 +18,15 @@ public:
   // Plays out a random game from the current position to the end and
   // returns the final game_state.
   GameState simulate_game();
+  // Runs a heavy playout to simulate a game and returns the final game_state.
+  GameState heavy_simulate_game();
   // Selects a random, legal move.
   Coordinate select_random_move();
-  // Selects n random moves and plays the one with the highest heuristic
+  // Selects n random moves and selects the one with the highest heuristic
   // value.
-  // void best_of_n_move();
+  Coordinate best_of_n_move();
+  // Returns the heuristic score of the given move.
+  int heuristic_score(Coordinate move);
 };
 
 class MCTSNode
