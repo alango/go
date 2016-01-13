@@ -75,12 +75,26 @@ int MCTSGameState::heuristic_score(Coordinate move)
   int score = 0;
   // Pass receives the lowest score.
   if (move == pass) { return -100; }
+  
   // Penalise moves on the first two lines.
-  else if (move.x <= 1 || move.y <= 1 ||
+  if (move.x <= 1 || move.y <= 1 ||
            move.x >= BOARD_SIZE-2 || move.y >= BOARD_SIZE-2)
   {
     score -= 5;
   }
+
+  // Favour moves that respond locally to the last move.
+  Coordinate last_move = game_record.back();
+  if (!(last_move == pass))
+  {
+    int manhattan_dist = std::abs(move.x - last_move.x) +
+                         std::abs(move.y - last_move.y);
+    if (manhattan_dist <= 3)
+    {
+      score += 1;
+    }
+  }
+
   return score;
 }
 
