@@ -341,6 +341,24 @@ void GameState::play_move(Coordinate move)
   game_record.push_back(move);
 }
 
+bool GameState::is_capture(Coordinate move)
+{
+  list_of_points adjacent_points = get_adjacent_points(move);
+  for (list_of_points::iterator point = adjacent_points.begin();
+       point != adjacent_points.end();
+       point++)
+  {
+    if (get_point(*point) == other_player)
+    {
+      if (liberties_on_group(*point) == 1)
+      {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 is_legal_responses GameState::is_legal(Coordinate move)
 {
   Coordinate pass(-1,-1);
@@ -348,7 +366,6 @@ is_legal_responses GameState::is_legal(Coordinate move)
   {
     return LEGAL_MOVE;
   }
-  bool capture_made = false;
   if (!point_on_board(move))
   {
     return POINT_NOT_ON_BOARD;
@@ -365,19 +382,7 @@ is_legal_responses GameState::is_legal(Coordinate move)
 
   // Check for capture. If a capture has been made, then the move is legal.
   // If not, then check if the move is suicide.
-  list_of_points adjacent_points = get_adjacent_points(move);
-  for (list_of_points::iterator point = adjacent_points.begin();
-       point != adjacent_points.end();
-       point++)
-  {
-    if (get_point(*point) == other_player)
-    {
-      if (liberties_on_group(*point) == 1)
-      {
-        capture_made = true;
-      }
-    }
-  }
+  bool capture_made = is_capture(move);
   if (capture_made == false)
   {
     if (is_suicide(move))

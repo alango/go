@@ -160,7 +160,6 @@ void MCRAVENode::print_maps()
   std::cout << "Printing RAVE maps" << std::endl;
   MCTSNode::print_maps();
   print_rave_win_ratio_map();
-  print_rave_visit_map();
 }
 
 void MCRAVENode::print_rave_visit_map()

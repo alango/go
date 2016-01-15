@@ -75,6 +75,8 @@ public:
   int remove_captures(Coordinate point);
   // Checks if a move is illegal due to being suicidal.
   bool is_suicide(Coordinate move);
+  // Checks if a given move would result in a capture.
+  bool is_capture(Coordinate move);
   // Returns 0 if a move is legal, and the appropriate response code otherwise.
   is_legal_responses is_legal(Coordinate move);
   // Checks if a point is a true eye or not for the player of the specified colour.

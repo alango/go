@@ -95,6 +95,12 @@ int MCTSGameState::heuristic_score(Coordinate move)
     }
   }
 
+  // Large bonus for moves that capture stones.
+  if (is_capture(move))
+  {
+    score += 5;
+  }
+
   return score;
 }
 
