@@ -165,6 +165,7 @@ MCTSNode* MCTSNode::create_child(Coordinate move)
   }
   child_node->parent_node = this;
   child_node->game_state.play_move(move);
+  child_node->possible_moves = game_state.possible_moves;
   child_node->current_move = move;
   children.push_back(child_node);
   return child_node;
@@ -323,6 +324,7 @@ MCRAVENode* MCRAVENode::create_child(Coordinate move)
   }
   child_node->parent_node = this;
   child_node->game_state.play_move(move);
+  child_node->possible_moves = game_state.possible_moves;
   child_node->current_move = move;
   children.push_back(child_node);
   return child_node;
