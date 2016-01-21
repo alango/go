@@ -5,6 +5,8 @@
 #include "game_state.h"
 
 #define BEST_OF_N 10
+#define HEURISTIC_CONF 50
+#define HEURISTIC_K 5
 
 class MCTSGameState : public GameState
 // A derived class of GameState containing extra methods for use

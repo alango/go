@@ -72,35 +72,37 @@ Coordinate MCTSGameState::best_of_n_move()
 
 int MCTSGameState::heuristic_score(Coordinate move)
 {
-  int score = 0;
+  int score = 5;
   // Pass receives the lowest score.
-  if (move == pass) { return -100; }
+  if (move == pass) { return 0; }
   
   // Penalise moves on the first two lines.
   if (move.x <= 1 || move.y <= 1 ||
            move.x >= BOARD_SIZE-2 || move.y >= BOARD_SIZE-2)
   {
-    score -= 5;
+    score -= 2;
   }
 
   // Favour moves that respond locally to the last move.
-  Coordinate last_move = game_record.back();
-  if (!(last_move == pass))
+  if (!game_record.empty())
   {
-    int manhattan_dist = std::abs(move.x - last_move.x) +
-                         std::abs(move.y - last_move.y);
-    if (manhattan_dist <= 3)
+    Coordinate last_move = game_record.back();
+    if (!(last_move == pass))
     {
-      score += 1;
+      int manhattan_dist = std::abs(move.x - last_move.x) +
+                           std::abs(move.y - last_move.y);
+      if (manhattan_dist <= 3)
+      {
+        score += 1;
+      }
     }
   }
 
   // Large bonus for moves that capture stones.
   if (is_capture(move))
   {
-    score += 5;
+    score += 3;
   }
-
   return score;
 }
 
@@ -165,8 +167,10 @@ MCTSNode* MCTSNode::create_child(Coordinate move)
   }
   child_node->parent_node = this;
   child_node->game_state.play_move(move);
-  child_node->possible_moves = game_state.possible_moves;
+  child_node->potential_children = child_node->game_state.possible_moves;
   child_node->current_move = move;
+  child_node->visits = HEURISTIC_CONF;
+  child_node->wins = HEURISTIC_K * game_state.heuristic_score(move);
   children.push_back(child_node);
   return child_node;
 }
@@ -324,8 +328,13 @@ MCRAVENode* MCRAVENode::create_child(Coordinate move)
   }
   child_node->parent_node = this;
   child_node->game_state.play_move(move);
-  child_node->possible_moves = game_state.possible_moves;
+  child_node->potential_children = child_node->game_state.possible_moves;
   child_node->current_move = move;
+  child_node->visits = HEURISTIC_CONF;
+  child_node->rave_visits = HEURISTIC_CONF;
+  int heuristic_score = game_state.heuristic_score(move);
+  child_node->wins = HEURISTIC_K * heuristic_score;
+  child_node->rave_wins = HEURISTIC_K * heuristic_score;
   children.push_back(child_node);
   return child_node;
 }
