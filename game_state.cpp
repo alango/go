@@ -70,6 +70,8 @@ GameState::GameState()
 
 GameState::~GameState() {};
 
+int GameState::komi = 0;
+
 Coordinate GameState::pass(-1,-1);
 
 player GameState::get_point(Coordinate point)
@@ -255,6 +257,7 @@ void GameState::place_handicap_stones(int handicap)
     set_point(point, BLACK);
   }
   play_move(pass);
+  komi = handicap;
 }
 
 void GameState::play_move(Coordinate move)
@@ -574,7 +577,7 @@ int GameState::score_game()
 {
   Coordinate coordinate;
   int black_score = 0;
-  int white_score = 0;
+  int white_score = komi;
   for (int y = 0; y < BOARD_SIZE; y++)
   {
     for (int x = 0; x < BOARD_SIZE; x++)
