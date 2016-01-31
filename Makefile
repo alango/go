@@ -8,6 +8,7 @@ SOURCES = game_state.cpp \
           mcts_node.cpp \
           mcts_player.cpp \
           print_methods.cpp \
+          neural_net.cpp \
           test.cpp main.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
