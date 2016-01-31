@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdlib.h>
 #include "neural_net.h"
 
 Neuron::Neuron(int num_weights)
@@ -24,11 +25,11 @@ double Neuron::process(std::vector<int> inputs)
 }
 
 NeuralNet::NeuralNet():
+output_neuron(40)
 {
 	for (int i=0; i<40; i++)
 	{
 		Neuron neuron = Neuron(82);
 		hidden_layer.push_back(neuron);
 	}
-	output_neuron = Neuron(40);
 }

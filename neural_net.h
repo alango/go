@@ -1,6 +1,8 @@
 #ifndef NEURAL_NET
 #define NEURAL_NET
 
+#include <vector>
+
 class Neuron
 {
 private:
@@ -9,7 +11,7 @@ private:
 public:
 	Neuron(int num_weights);
 	~Neuron();
-	double process(std::vector<int> inputs)
+	double process(std::vector<int> inputs);
 };
 
 class NeuralNet
