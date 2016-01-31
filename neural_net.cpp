@@ -13,7 +13,7 @@ Neuron::Neuron(int num_weights)
 
 Neuron::~Neuron() {}
 
-double Neuron::process(std::vector<int> inputs)
+double Neuron::process_inputs(std::vector<int> inputs)
 {
 	double activation = 0;
 	for (int i=0; i<num_weights; i++)
@@ -24,12 +24,43 @@ double Neuron::process(std::vector<int> inputs)
 	return 1 / (1 + exp(activation));
 }
 
+OutputNeuron::OutputNeuron(int num_weights):
+  Neuron(num_weights)
+{};
+
+OutputNeuron::~OutputNeuron() {}
+
+double OutputNeuron::process_inputs(std::vector<double> inputs)
+{
+	double activation = 0;
+	for (int i=0; i<num_weights; i++)
+	{
+		activation += inputs[i] * weights[i];
+	}
+	return activation;
+}
+
 NeuralNet::NeuralNet():
-output_neuron(40)
+  output_neuron(40)
 {
 	for (int i=0; i<40; i++)
 	{
 		Neuron neuron = Neuron(82);
 		hidden_layer.push_back(neuron);
 	}
+}
+
+NeuralNet::~NeuralNet() {}
+
+double NeuralNet::process_inputs(std::vector<int> inputs)
+{
+	std::vector<double> hidden_layer_outputs;
+	for (std::vector<Neuron>::iterator neuron = hidden_layer.begin();
+		   neuron != hidden_layer.end();
+		   neuron++)
+	{
+		hidden_layer_outputs.push_back(neuron->process_inputs(inputs));
+	}
+
+	return output_neuron.process_inputs(hidden_layer_outputs);
 }

@@ -5,23 +5,32 @@
 
 class Neuron
 {
-private:
+protected:
 	int num_weights;
 	std::vector<double> weights;
 public:
 	Neuron(int num_weights);
 	~Neuron();
-	double process(std::vector<int> inputs);
+	double process_inputs(std::vector<int> inputs);
+};
+
+class OutputNeuron : public Neuron
+{
+public:
+  OutputNeuron(int num_weights);
+  ~OutputNeuron();
+  double process_inputs(std::vector<double> inputs);
 };
 
 class NeuralNet
 {
 private:
   std::vector<Neuron> hidden_layer;
-  Neuron output_neuron;
+  OutputNeuron output_neuron;
 public:
   NeuralNet();
   ~NeuralNet();
+  double process_inputs(std::vector<int> inputs);
 };
 
 #endif
