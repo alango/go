@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 #include "neural_net.h"
 
 Neuron::Neuron(int num_weights):
@@ -105,4 +106,52 @@ void NeuralNet::update_weights(std::vector<int> inputs, double target)
   {
     output_neuron.weights[i] = new_output_neuron_weights[i];
   }
+}
+
+void NeuralNet::read_weights_from_file()
+{
+  std::ifstream weights_file;
+  weights_file.open("weights.txt");
+  for (std::vector<Neuron>::iterator neuron = hidden_layer.begin();
+       neuron != hidden_layer.end();
+       neuron++)
+  {
+    for (std::vector<double>::iterator weight = neuron->weights.begin();
+         weight != neuron->weights.end();
+         weight++)
+    {
+      weights_file >> *weight;
+    }
+  }
+  for (std::vector<double>::iterator weight = output_neuron.weights.begin();
+       weight != output_neuron.weights.end();
+       weight++)
+  {
+    weights_file >> *weight;
+  }
+  weights_file.close();
+}
+
+void NeuralNet::write_weights_to_file()
+{
+  std::ofstream weights_file;
+  weights_file.open("weights1.txt");
+  for (std::vector<Neuron>::iterator neuron = hidden_layer.begin();
+       neuron != hidden_layer.end();
+       neuron++)
+  {
+    for (std::vector<double>::iterator weight = neuron->weights.begin();
+         weight != neuron->weights.end();
+         weight++)
+    {
+      weights_file << *weight << "\n";
+    }
+  }
+  for (std::vector<double>::iterator weight = output_neuron.weights.begin();
+       weight != output_neuron.weights.end();
+       weight++)
+  {
+    weights_file << *weight << "\n";
+  }
+  weights_file.close();
 }
