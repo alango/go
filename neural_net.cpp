@@ -7,7 +7,7 @@ Neuron::Neuron(int num_weights):
   num_weights(num_weights)
 {
 	// Initialise weights and bias randomly.
-	for (int i=0; i<num_weights; i++)
+	for (int i=0; i<num_weights+1; i++)
 	{
 		weights.push_back(((double) rand() / RAND_MAX) - 0.5);
 	}
@@ -17,6 +17,7 @@ Neuron::~Neuron() {}
 
 double Neuron::process_inputs(std::vector<int> inputs)
 {
+  inputs.push_back(1); // Input for the bias.
 	double activation = 0;
 	for (int i=0; i<num_weights+1; i++)
 	{
@@ -35,6 +36,7 @@ OutputNeuron::~OutputNeuron() {}
 
 double OutputNeuron::process_inputs(std::vector<double> inputs)
 {
+  inputs.push_back(1); // Input for the bias.
 	double activation = 0;
 	for (int i=0; i<num_weights+1; i++)
 	{
@@ -61,7 +63,6 @@ NeuralNet::~NeuralNet() {}
 
 void NeuralNet::update_weights(std::vector<int> inputs, double target)
 {
-  inputs.push_back(1); // Input for the bias.
   std::vector<double> hidden_layer_outputs;
   for (std::vector<Neuron>::iterator neuron = hidden_layer.begin();
        neuron != hidden_layer.end();
@@ -69,7 +70,6 @@ void NeuralNet::update_weights(std::vector<int> inputs, double target)
   {
     hidden_layer_outputs.push_back(neuron->process_inputs(inputs));
   }
-  hidden_layer_outputs.push_back(1); // Input for the bias.
   double output = output_neuron.process_inputs(hidden_layer_outputs);
 
 	double error = output - target;
