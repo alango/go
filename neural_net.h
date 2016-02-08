@@ -5,7 +5,7 @@
 
 class Neuron
 {
-protected:
+public:
 	int num_weights;
 	std::vector<double> weights;
 public:
@@ -25,12 +25,14 @@ public:
 class NeuralNet
 {
 private:
+  int hidden_layer_size;
   std::vector<Neuron> hidden_layer;
   OutputNeuron output_neuron;
+  double learning_rate;
 public:
-  NeuralNet();
+  NeuralNet(int input_size, int hidden_layer_size);
   ~NeuralNet();
-  double process_inputs(std::vector<int> inputs);
+  void update_weights(std::vector<int> inputs, double target);
 };
 
 #endif
