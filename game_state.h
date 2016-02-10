@@ -89,6 +89,8 @@ public:
   // Returns the difference between black and white's scores. Only guaranteed to
   // work if game_finished returns true.
   int score_game();
+  // Takes a game_state and returns a vector containing the inputs for the neural net.
+  std::vector<int> create_net_inputs();
 
 private:
   // Helper function for is_eye to detect if a group is alive through

@@ -604,6 +604,33 @@ int GameState::score_game()
   return black_score - white_score;
 }
 
+std::vector<int> GameState::create_net_inputs()
+{
+  std::vector<int> inputs;
+  Coordinate point;
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      point.set(col, row);
+      if (get_point(point) == BLACK) { inputs.push_back(1); }
+      else { inputs.push_back(0); }
+    }
+  }
+  for (int row = 0; row < BOARD_SIZE; row++)
+  {
+    for (int col = 0; col < BOARD_SIZE; col++)
+    {
+      point.set(col, row);
+      if (get_point(point) == WHITE) { inputs.push_back(1); }
+      else { inputs.push_back(0); }
+    }
+  }
+  if (to_play == BLACK) { inputs.push_back(1); }
+  else  { inputs.push_back(0); }
+  return inputs;
+}
+
 void GameState::print()
 {
   Coordinate coordinate;
