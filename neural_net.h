@@ -32,6 +32,7 @@ private:
 public:
   NeuralNet(int input_size, int hidden_layer_size);
   ~NeuralNet();
+  double process_inputs(std::vector<int> inputs);
   void update_weights(std::vector<int> inputs, double target);
   void read_weights_from_file();
   void write_weights_to_file();

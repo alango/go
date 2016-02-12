@@ -85,3 +85,43 @@ Coordinate RandomPlayer::get_move(GameState game_state)
   }
   return move;
 }
+
+NeuralNetPlayer::NeuralNetPlayer():
+  net(163,40)
+{
+  net.read_weights_from_file();
+}
+
+NeuralNetPlayer::~NeuralNetPlayer() {}
+
+Coordinate NeuralNetPlayer::get_move(GameState game_state)
+{
+  list_of_points moves;
+  std::vector<double> scores;
+  for (list_of_points::iterator move = game_state.possible_moves.begin();
+       move != game_state.possible_moves.end();
+       move++)
+  {
+    if (game_state.is_legal(*move) == LEGAL_MOVE && !game_state.is_eye(*move, game_state.to_play))
+    {
+      moves.push_back(*move);
+      game_state.set_point(*move, game_state.to_play);
+      scores.push_back(net.process_inputs(game_state.create_net_inputs()));
+      game_state.set_point(*move, EMPTY);
+    }
+  }
+
+  Coordinate best_move;
+  double best_score = 0;
+  for (int i=0; i < moves.size(); i++)
+  {
+    if (scores[i] > best_score)
+    {
+      best_score = scores[i];
+      best_move = moves[i];
+    }
+  }
+  net.update_weights(game_state.create_net_inputs(), best_score);
+  return best_move;
+}
+

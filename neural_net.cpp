@@ -61,6 +61,18 @@ NeuralNet::NeuralNet(int input_size, int hidden_layer_size):
 
 NeuralNet::~NeuralNet() {}
 
+double NeuralNet::process_inputs(std::vector<int> inputs)
+{
+  std::vector<double> hidden_layer_outputs;
+  for (std::vector<Neuron>::iterator neuron = hidden_layer.begin();
+       neuron != hidden_layer.end();
+       neuron++)
+  {
+    hidden_layer_outputs.push_back(neuron->process_inputs(inputs));
+  }
+  return output_neuron.process_inputs(hidden_layer_outputs);
+}
+
 void NeuralNet::update_weights(std::vector<int> inputs, double target)
 {
   std::vector<double> hidden_layer_outputs;
@@ -84,6 +96,8 @@ void NeuralNet::update_weights(std::vector<int> inputs, double target)
     new_weight = output_neuron.weights[i] - (learning_rate*delta);
     new_output_neuron_weights.push_back(new_weight);
   }
+  // Update bias.
+  new_output_neuron_weights.push_back(output_neuron.weights.back() - (learning_rate*delta));
 
   // Iterate through each hidden layer neuron
   for (int i = 0; i != hidden_layer_size; i++)
@@ -95,6 +109,7 @@ void NeuralNet::update_weights(std::vector<int> inputs, double target)
     {
       hidden_layer[i].weights[j] -= learning_rate * delta * inputs[j];
     }
+    hidden_layer[i].weights.back() -= learning_rate * delta;
   }
 
   for (int i = 0; i != hidden_layer_size + 1; i++)
