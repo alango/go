@@ -30,12 +30,13 @@ private:
 
 class NeuralNetPlayer: public Player
 {
-private:
-  NeuralNet net;
+public:
+  static NeuralNet net;
 public:
   NeuralNetPlayer();
   ~NeuralNetPlayer();
   Coordinate get_move(GameState game_state);
+  void final_update(GameState game_state, int score);
 };
 
 #endif

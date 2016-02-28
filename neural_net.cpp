@@ -42,8 +42,6 @@ double OutputNeuron::process_inputs(std::vector<double> inputs)
 	{
 		activation += inputs[i] * weights[i];
 	}
-	// return activation;
-  // std::cout << "output: " << 1 / (1 + exp(-activation)) << std::endl;
   return 1 / (1 + exp(-activation));
 }
 
@@ -85,7 +83,7 @@ void NeuralNet::update_weights(std::vector<int> inputs, double target)
   double output = output_neuron.process_inputs(hidden_layer_outputs);
 
 	double error = output - target;
-  std::cout << "error: " << error << std::endl;
+  // std::cout << "error: " << error << std::endl;
   double d_error_d_activation = error * output * (1-output);
   std::vector<double> new_output_neuron_weights;
   double delta;
@@ -145,7 +143,7 @@ void NeuralNet::read_weights_from_file()
 void NeuralNet::write_weights_to_file()
 {
   std::ofstream weights_file;
-  weights_file.open("weights1.txt");
+  weights_file.open("weights.txt");
   for (std::vector<Neuron>::iterator neuron = hidden_layer.begin();
        neuron != hidden_layer.end();
        neuron++)

@@ -47,7 +47,7 @@ Coordinate HumanPlayer::get_move(GameState game_state)
 
 RandomPlayer::RandomPlayer()
 {
-  srand(time(NULL));
+  // srand(time(NULL));
   Coordinate move;
   for (int y = 0; y < BOARD_SIZE; y++)
   {
@@ -86,42 +86,71 @@ Coordinate RandomPlayer::get_move(GameState game_state)
   return move;
 }
 
-NeuralNetPlayer::NeuralNetPlayer():
-  net(163,40)
+NeuralNetPlayer::NeuralNetPlayer()
 {
   net.read_weights_from_file();
 }
 
 NeuralNetPlayer::~NeuralNetPlayer() {}
 
+NeuralNet NeuralNetPlayer::net(163,40);
+
 Coordinate NeuralNetPlayer::get_move(GameState game_state)
 {
   list_of_points moves;
   std::vector<double> scores;
+  std::vector<double> cumulative_scores;
+  cumulative_scores.push_back(0);
   for (list_of_points::iterator move = game_state.possible_moves.begin();
        move != game_state.possible_moves.end();
        move++)
   {
     if (game_state.is_legal(*move) == LEGAL_MOVE && !game_state.is_eye(*move, game_state.to_play))
     {
+      GameState game_state_copy = GameState(game_state);
       moves.push_back(*move);
-      game_state.set_point(*move, game_state.to_play);
-      scores.push_back(net.process_inputs(game_state.create_net_inputs()));
-      game_state.set_point(*move, EMPTY);
+      game_state_copy.play_move(*move);
+      if (game_state.to_play == BLACK)
+      {
+        if (game_state_copy.game_finished())
+        {
+          int final_score = game_state_copy.score_game();
+          if (final_score > 0) { scores.push_back(1); }
+          else { scores.push_back(0); }
+        }
+        else
+        {
+          scores.push_back(net.process_inputs(game_state_copy.create_net_inputs()));
+        }
+      }
+      else if (game_state.to_play == WHITE)
+      {
+       if (game_state_copy.game_finished())
+       {
+         int final_score = game_state_copy.score_game();
+         if (final_score > 0) { scores.push_back(0); }
+         else { scores.push_back(1); }
+       }
+       else
+       {
+         scores.push_back(1-net.process_inputs(game_state_copy.create_net_inputs()));
+       } 
+      }
+      cumulative_scores.push_back(cumulative_scores.back() + scores.back());
     }
   }
-
-  Coordinate best_move;
-  double best_score = 0;
-  for (int i=0; i < moves.size(); i++)
+  // Generate random double between 0 and the sum of scores.
+  double random_double = (double) rand() / RAND_MAX;
+  random_double *= cumulative_scores.back();
+  if (moves.empty())
   {
-    if (scores[i] > best_score)
-    {
-      best_score = scores[i];
-      best_move = moves[i];
-    }
+    return GameState::pass;
   }
-  net.update_weights(game_state.create_net_inputs(), best_score);
-  return best_move;
+  int i=1;
+  while (cumulative_scores[i] < random_double)
+  {
+    i++;
+  }
+  net.update_weights(game_state.create_net_inputs(), scores[i]);
+  return moves[i-1];
 }
-
