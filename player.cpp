@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 #include "player.h"
 
 Coordinate HumanPlayer::request_move()
@@ -110,6 +111,7 @@ Coordinate NeuralNetPlayer::get_move(GameState game_state)
       GameState game_state_copy = GameState(game_state);
       moves.push_back(*move);
       game_state_copy.play_move(*move);
+      std::vector<int> net_inputs = game_state_copy.create_net_inputs();
       if (game_state.to_play == BLACK)
       {
         if (game_state_copy.game_finished())
@@ -120,7 +122,7 @@ Coordinate NeuralNetPlayer::get_move(GameState game_state)
         }
         else
         {
-          scores.push_back(net.process_inputs(game_state_copy.create_net_inputs()));
+          scores.push_back(net.process_inputs(net_inputs));
         }
       }
       else if (game_state.to_play == WHITE)
@@ -133,10 +135,11 @@ Coordinate NeuralNetPlayer::get_move(GameState game_state)
        }
        else
        {
-         scores.push_back(1-net.process_inputs(game_state_copy.create_net_inputs()));
+         scores.push_back(1-net.process_inputs(net_inputs));
        } 
       }
-      cumulative_scores.push_back(cumulative_scores.back() + scores.back());
+      // std::cout << scores.back() << std::endl;
+      cumulative_scores.push_back(cumulative_scores.back() + exp(scores.back()));
     }
   }
   // Generate random double between 0 and the sum of scores.
@@ -147,10 +150,21 @@ Coordinate NeuralNetPlayer::get_move(GameState game_state)
     return GameState::pass;
   }
   int i=1;
+  // std::cout << "Cumulative score: " << cumulative_scores.back() << std::endl;
+  // std::cout << "random double: " << random_double << std::endl;
+  // std::cout << "cumulative_scores size: " << cumulative_scores.size() << std::endl;
   while (cumulative_scores[i] < random_double)
   {
+    // std::cout << cumulative_scores[i] << std::endl;
     i++;
   }
-  net.update_weights(game_state.create_net_inputs(), scores[i]);
+  if (game_state.to_play == BLACK)
+  {
+    net.update_weights(game_state.create_net_inputs(), scores[i-1]);
+  }
+  else if (game_state.to_play == WHITE)
+  {
+    net.update_weights(game_state.create_net_inputs(), 1-scores[i-1]);
+  }
   return moves[i-1];
 }
