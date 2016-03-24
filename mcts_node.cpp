@@ -252,8 +252,8 @@ MCTSNode* MCTSNode::create_child(Coordinate move)
   child_node->game_state.play_move(move);
   child_node->potential_children = child_node->game_state.possible_moves;
   child_node->current_move = move;
-  child_node->visits = HEURISTIC_CONF;
-  child_node->wins = HEURISTIC_K * game_state.heuristic_score(move);
+  child_node->visits = HEURISTIC_CONF * game_state.heuristic_score(move);
+  child_node->wins = HEURISTIC_CONF * game_state.heuristic_score(move);
   children.push_back(child_node);
   return child_node;
 }
@@ -413,11 +413,11 @@ MCRAVENode* MCRAVENode::create_child(Coordinate move)
   child_node->game_state.play_move(move);
   child_node->potential_children = child_node->game_state.possible_moves;
   child_node->current_move = move;
-  child_node->visits = HEURISTIC_CONF;
-  child_node->rave_visits = HEURISTIC_CONF;
-  int heuristic_score = game_state.heuristic_score(move);
-  child_node->wins = HEURISTIC_K * heuristic_score;
-  child_node->rave_wins = HEURISTIC_K * heuristic_score;
+  int heuristic_score = HEURISTIC_CONF * game_state.heuristic_score(move);
+  child_node->visits = heuristic_score
+  child_node->rave_visits = heuristic_score;
+  child_node->wins = heuristic_score;
+  child_node->rave_wins = heuristic_score;
   children.push_back(child_node);
   return child_node;
 }
