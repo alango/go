@@ -26,6 +26,10 @@ public:
   GameState simulate_game();
   // Runs a heavy playout to simulate a game and returns the final game_state.
   GameState heavy_simulate_game();
+  // Use the neural network to playout the rest of the game.
+  GameState neural_net_simulate_game();
+  // Use the neural net to select a move for use during playouts.
+  Coordinate get_neural_net_move();
   // Selects a random, legal move.
   Coordinate select_random_move();
   // Selects n random moves and selects the one with the highest heuristic

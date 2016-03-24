@@ -141,6 +141,78 @@ GameState MCTSGameState::heavy_simulate_game()
   return playout_game_state;
 }
 
+GameState MCTSGameState::neural_net_simulate_game()
+{
+  // Create a copy of the current game_state to run the simulation on.
+  MCTSGameState playout_game_state = *this;
+  while (!playout_game_state.game_over)
+  {
+    Coordinate move = playout_game_state.get_neural_net_move();
+    playout_game_state.play_move(move);
+  }
+  return playout_game_state;
+}
+
+Coordinate MCTSGameState::get_neural_net_move()
+{
+  list_of_points moves;
+  std::vector<double> scores;
+  std::vector<double> cumulative_scores;
+  cumulative_scores.push_back(0);
+  for (list_of_points::iterator move = possible_moves.begin();
+       move != possible_moves.end();
+       move++)
+  {
+    if (is_legal(*move) == LEGAL_MOVE && !is_eye(*move, to_play))
+    {
+      GameState game_state_copy = GameState(*this);
+      moves.push_back(*move);
+      game_state_copy.play_move(*move);
+      std::vector<int> net_inputs = game_state_copy.create_net_inputs();
+      if (to_play == BLACK)
+      {
+        if (game_state_copy.game_finished())
+        {
+          int final_score = game_state_copy.score_game();
+          if (final_score > 0) { scores.push_back(1); }
+          else { scores.push_back(0); }
+        }
+        else
+        {
+          scores.push_back(net.process_inputs(net_inputs));
+        }
+      }
+      else if (to_play == WHITE)
+      {
+       if (game_state_copy.game_finished())
+       {
+         int final_score = game_state_copy.score_game();
+         if (final_score > 0) { scores.push_back(0); }
+         else { scores.push_back(1); }
+       }
+       else
+       {
+         scores.push_back(1-net.process_inputs(net_inputs));
+       } 
+      }
+      cumulative_scores.push_back(cumulative_scores.back() + exp(scores.back()));
+    }
+  }
+  // Generate random double between 0 and the sum of scores.
+  double random_double = (double) rand() / RAND_MAX;
+  random_double *= cumulative_scores.back();
+  if (moves.empty())
+  {
+    return GameState::pass;
+  }
+  int i=1;
+  while (cumulative_scores[i] < random_double)
+  {
+    i++;
+  }
+  return moves[i-1];
+}
+
 MCTSNode::MCTSNode(GameState game_state):
   is_leaf(true),
   visits(0),
