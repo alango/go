@@ -74,7 +74,8 @@ Coordinate MCTSGameState::best_of_n_move()
 
 int MCTSGameState::heuristic_score(Coordinate move)
 {
-  int score = 5;
+  return 0;
+/*  int score = 5;
   // Pass receives the lowest score.
   if (move == pass) { return 0; }
   
@@ -114,7 +115,7 @@ int MCTSGameState::heuristic_score(Coordinate move)
   int eval_int = (int) NEURALNET_CONF * eval;
   score += eval_int;
 
-  return score;
+  return score;*/
 }
 
 GameState MCTSGameState::simulate_game()
@@ -414,7 +415,7 @@ MCRAVENode* MCRAVENode::create_child(Coordinate move)
   child_node->potential_children = child_node->game_state.possible_moves;
   child_node->current_move = move;
   int heuristic_score = HEURISTIC_CONF * game_state.heuristic_score(move);
-  child_node->visits = heuristic_score
+  child_node->visits = heuristic_score;
   child_node->rave_visits = heuristic_score;
   child_node->wins = heuristic_score;
   child_node->rave_wins = heuristic_score;
@@ -427,7 +428,7 @@ double MCRAVENode::k = 1000;
 void MCRAVENode::simulate_and_update()
 {
   // GameState result_game_state = game_state.simulate_game();
-  GameState result_game_state = game_state.heavy_simulate_game();
+  GameState result_game_state = game_state.simulate_game();
   int result = result_game_state.score_game();
   list_of_points game_record = result_game_state.game_record;
   if ((result > 0 && game_state.other_player == BLACK)

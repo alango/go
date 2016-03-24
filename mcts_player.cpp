@@ -3,7 +3,7 @@
 
 MCTSPlayer::MCTSPlayer():
   current_node(NULL),
-  simulations_per_turn(1000)
+  simulations_per_turn(MCTS_SIMS_PER_TURN)
 {
   MCTSGameState::net.read_weights_from_file();
 }
@@ -46,11 +46,11 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
 
   // If the player is really far ahead or really far behind,
   // then just finish the game quickly.
-  if (current_node->wins / current_node->visits < 0.02
+/*  if (current_node->wins / current_node->visits < 0.02
    || current_node->wins / current_node->visits > 0.98)
   {
     simulations_per_turn = 1000;
-  }
+  }*/
 
   // Find move with most visits.
   Coordinate move = current_node->select_move();
@@ -62,7 +62,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
 
 MCRAVEPlayer::MCRAVEPlayer()
 {
-  simulations_per_turn = 500;
+  simulations_per_turn = MCRAVE_SIMS_PER_TURN;
 }
 
 MCRAVEPlayer::~MCRAVEPlayer()

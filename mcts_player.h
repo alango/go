@@ -4,6 +4,9 @@
 #include "player.h"
 #include "mcts_node.h"
 
+#define MCTS_SIMS_PER_TURN 2000
+#define MCRAVE_SIMS_PER_TURN 2000
+
 class MCTSPlayer: public Player
 {
 protected:
