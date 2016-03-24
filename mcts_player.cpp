@@ -1,9 +1,12 @@
 #include "mcts_player.h"
+#include "neural_net.h"
 
 MCTSPlayer::MCTSPlayer():
   current_node(NULL),
   simulations_per_turn(1000)
-{}
+{
+  MCTSGameState::net.read_weights_from_file();
+}
 
 MCTSPlayer::~MCTSPlayer() {}
 
@@ -59,7 +62,7 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
 
 MCRAVEPlayer::MCRAVEPlayer()
 {
-  simulations_per_turn = 3000;
+  simulations_per_turn = 500;
 }
 
 MCRAVEPlayer::~MCRAVEPlayer()

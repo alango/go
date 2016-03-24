@@ -27,6 +27,8 @@ MCTSGameState::MCTSGameState(GameState game_state)
 
 MCTSGameState::~MCTSGameState() {}
 
+NeuralNet MCTSGameState::net(163,40);
+
 Coordinate MCTSGameState::select_random_move()
 {
   Coordinate move;
@@ -103,6 +105,15 @@ int MCTSGameState::heuristic_score(Coordinate move)
   {
     score += 3;
   }
+
+  // Get evaluation from neural network.
+  GameState game_state_copy = GameState(*this);
+  game_state_copy.play_move(move);
+  std::vector<int> net_inputs = game_state_copy.create_net_inputs();
+  double eval = net.process_inputs(net_inputs);
+  int eval_int = (int) NEURALNET_CONF * eval;
+  score += eval_int;
+
   return score;
 }
 

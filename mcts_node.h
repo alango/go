@@ -3,17 +3,21 @@
 
 #include <vector>
 #include "game_state.h"
+#include "neural_net.h"
 
 #define BEST_OF_N 10
 #define HEURISTIC_CONF 50
 #define HEURISTIC_K 5
+#define NEURALNET_CONF 5
 
 class MCTSGameState : public GameState
 // A derived class of GameState containing extra methods for use
 // during MCTS.
 {
+public:
   list_of_points all_points;
   Coordinate last_move;
+  static NeuralNet net;
 public:
   MCTSGameState(GameState game_state);
   ~MCTSGameState();
