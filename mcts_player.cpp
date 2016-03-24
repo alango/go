@@ -38,19 +38,17 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   // Run MCTS steps.
   for (int i = 0; i < simulations_per_turn; i++)
   {
-    if (i%500==0) {std::cout<<i<<std::endl;}
+    // if (i%500==0) {std::cout<<i<<std::endl;}
     run_step();
   }
 
-  current_node->print_maps();
+  // current_node->print_maps();
 
-  // If the player is really far ahead or really far behind,
-  // then just finish the game quickly.
-/*  if (current_node->wins / current_node->visits < 0.02
-   || current_node->wins / current_node->visits > 0.98)
+  // If the player is really far behind, then resign.
+  if (current_node->wins / current_node->visits > 0.98)
   {
-    simulations_per_turn = 1000;
-  }*/
+    return GameState::resign;
+  }
 
   // Find move with most visits.
   Coordinate move = current_node->select_move();

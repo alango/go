@@ -74,6 +74,8 @@ int GameState::komi = 0;
 
 Coordinate GameState::pass(-1,-1);
 
+Coordinate GameState::resign(-2,-2);
+
 player GameState::get_point(Coordinate point)
 {
   return board_state[point.y][point.x];
@@ -264,9 +266,19 @@ void GameState::play_move(Coordinate move)
 {
   ko.set(-1,-1);
   Coordinate pass(-1,-1);
-  if (move == pass)
+  if (move == resign)
   {
-    if (one_pass) { game_over = true; } // Both players have now passed so the game ends.
+    game_over = true;
+    if (to_play == BLACK) { score = 0; }
+    if (to_play == WHITE) { score = 1; }
+  }
+  else if (move == pass)
+  {
+    if (one_pass)
+    {
+      game_over = true;
+      score = score_game();
+    } // Both players have now passed so the game ends.
     else { one_pass = true; }
   }
   else
@@ -601,7 +613,8 @@ int GameState::score_game()
   }
   // std::cout << "Black: " << black_score << std::endl;
   // std::cout << "White: " << white_score << std::endl;
-  return black_score - white_score;
+  score = black_score - white_score;
+  return score;
 }
 
 std::vector<int> GameState::create_net_inputs()

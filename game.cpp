@@ -9,8 +9,8 @@ Game::Game()
     turn();
   }
   game_state.print();
-  std::cout << "Final score: " << game_state.score_game() << std::endl;
-  game_state.print_game_record();
+  std::cout << "Final score: " << game_state.score << std::endl;
+  // game_state.print_game_record();
 }
 
 Game::~Game() {};
@@ -29,5 +29,12 @@ void Game::turn()
   }
   move.print();
   game_state.play_move(move);
-  game_state.print_game_record();
+  // game_state.print_game_record();
+}
+
+int Game::get_result()
+{
+  int score = game_state.score;
+  if (score > 0) { return 1; }
+  else { return 0; }
 }

@@ -46,8 +46,10 @@ public:
   // The points where the first 5 handicap stone should be placed.
   // Only correct for 9x9 boards.
   list_of_points handicap_points;
+  int score;
   static int komi;
   static Coordinate pass;
+  static Coordinate resign;
 
 public:
   GameState();

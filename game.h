@@ -16,6 +16,7 @@ public:
   Game();
   ~Game();
   void turn();
+  int get_result();
 };
 
 #endif

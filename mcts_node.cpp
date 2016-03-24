@@ -294,7 +294,7 @@ MCTSNode* MCTSNode::expand()
 double MCTSNode::get_node_score(MCTSNode* node)
 {
   if (node->visits == 0) { return 1000; }
-  double ans = (node->wins/node->visits) + sqrt(log(2*visits)/node->visits);
+  double ans = (node->wins/node->visits) + 2*sqrt(log(visits)/node->visits);
   return ans;
 }
 
@@ -363,7 +363,7 @@ void MCTSNode::update(bool win)
 
 void MCTSNode::simulate_and_update()
 {
-  int result = game_state.simulate_game().score_game();
+  int result = game_state.simulate_game().score;
   // Simulate a game and check if it is win for the player who played
   // the last move.
   if (result > 0 && game_state.other_player == BLACK) { update(true); }
@@ -445,10 +445,11 @@ void MCRAVENode::simulate_and_update()
 double MCRAVENode::get_node_score(MCTSNode* node)
 {
   if (node->visits == 0) { return 1000; }
-  double beta = sqrt(k / ((3 * node->visits) + k));
+  // double beta = sqrt(k / ((3 * node->visits) + k));
+  double beta = 0;
   double mc_score = node->wins / node->visits;
   double rave_score = (((MCRAVENode*)node)->rave_wins/((MCRAVENode*)node)->rave_visits);
-  return  (beta*rave_score) + ((1-beta)*mc_score) + (sqrt(log(2*visits)/node->visits));
+  return  (beta*rave_score) + ((1-beta)*mc_score) + 1*(sqrt(log(visits)/node->visits));
 }
 
 void MCRAVENode::rave_update(bool win, list_of_points game_record)
