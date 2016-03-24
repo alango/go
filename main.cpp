@@ -12,6 +12,12 @@ int main()
   ko_test();
   eye_test();
   // MCTSNode_test();
-  Game game;
+  int black_wins = 0;
+  for (int i=0; i != 50; i++)
+  {
+    Game game;
+    black_wins += game.get_result();
+    std::cout << "played: " << i << "; black wins: " << black_wins << std::endl;
+  }
   return 0;
 }
