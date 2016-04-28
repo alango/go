@@ -139,7 +139,7 @@ Coordinate NeuralNetPlayer::get_move(GameState game_state)
        } 
       }
       // std::cout << scores.back() << std::endl;
-      cumulative_scores.push_back(cumulative_scores.back() + exp(scores.back()));
+      cumulative_scores.push_back(cumulative_scores.back() + exp(40*scores.back()));
     }
   }
   // Generate random double between 0 and the sum of scores.
