@@ -74,8 +74,7 @@ Coordinate MCTSGameState::best_of_n_move()
 
 int MCTSGameState::heuristic_score(Coordinate move)
 {
-  return 0;
-/*  int score = 5;
+  int score = 6;
   // Pass receives the lowest score.
   if (move == pass) { return 0; }
   
@@ -83,7 +82,7 @@ int MCTSGameState::heuristic_score(Coordinate move)
   if (move.x <= 1 || move.y <= 1 ||
            move.x >= BOARD_SIZE-2 || move.y >= BOARD_SIZE-2)
   {
-    score -= 2;
+    score -= 4;
   }
 
   // Favour moves that respond locally to the last move.
@@ -96,7 +95,7 @@ int MCTSGameState::heuristic_score(Coordinate move)
                            std::abs(move.y - last_move.y);
       if (manhattan_dist <= 3)
       {
-        score += 1;
+        score += 2;
       }
     }
   }
@@ -114,8 +113,8 @@ int MCTSGameState::heuristic_score(Coordinate move)
   double eval = net.process_inputs(net_inputs);
   int eval_int = (int) NEURALNET_CONF * eval;
   score += eval_int;
-
-  return score;*/
+  // return eval_int;
+  return score;
 }
 
 GameState MCTSGameState::simulate_game()
@@ -423,7 +422,7 @@ MCRAVENode* MCRAVENode::create_child(Coordinate move)
   return child_node;
 }
 
-double MCRAVENode::k = 1000;
+double MCRAVENode::k = 200;
 
 void MCRAVENode::simulate_and_update()
 {
@@ -445,11 +444,11 @@ void MCRAVENode::simulate_and_update()
 double MCRAVENode::get_node_score(MCTSNode* node)
 {
   if (node->visits == 0) { return 1000; }
-  // double beta = sqrt(k / ((3 * node->visits) + k));
-  double beta = 0;
+  double beta = sqrt(k / ((3 * node->visits) + k));
+  // double beta = 0;
   double mc_score = node->wins / node->visits;
   double rave_score = (((MCRAVENode*)node)->rave_wins/((MCRAVENode*)node)->rave_visits);
-  return  (beta*rave_score) + ((1-beta)*mc_score) + 1*(sqrt(log(visits)/node->visits));
+  return  (beta*rave_score) + ((1-beta)*mc_score) + 2*(sqrt(log(visits)/node->visits));
 }
 
 void MCRAVENode::rave_update(bool win, list_of_points game_record)

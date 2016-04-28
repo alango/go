@@ -38,14 +38,14 @@ Coordinate MCTSPlayer::get_move(GameState game_state)
   // Run MCTS steps.
   for (int i = 0; i < simulations_per_turn; i++)
   {
-    // if (i%500==0) {std::cout<<i<<std::endl;}
+    if (i%2000==0) {std::cout<<i<<std::endl;}
     run_step();
   }
 
-  // current_node->print_maps();
+  current_node->print_maps();
 
   // If the player is really far behind, then resign.
-  if (current_node->wins / current_node->visits > 0.98)
+  if (current_node->wins / current_node->visits > 0.93)
   {
     return GameState::resign;
   }

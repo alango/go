@@ -11,9 +11,10 @@ int main()
 {
   ko_test();
   eye_test();
+  srand(time(NULL));
   // MCTSNode_test();
   int black_wins = 0;
-  for (int i=0; i != 50; i++)
+  for (int i=0; i != 1; i++)
   {
     Game game;
     black_wins += game.get_result();

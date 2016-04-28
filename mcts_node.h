@@ -5,8 +5,8 @@
 #include "game_state.h"
 #include "neural_net.h"
 
-#define BEST_OF_N 10
-#define HEURISTIC_CONF 5
+#define BEST_OF_N 5
+#define HEURISTIC_CONF 10
 #define NEURALNET_CONF 5
 
 class MCTSGameState : public GameState
