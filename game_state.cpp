@@ -39,6 +39,7 @@ void Coordinate::print()
 
 GameState::GameState()
 {
+  score = 0;
   Coordinate move;
   for (int row = 0; row < BOARD_SIZE; row++)
   {
@@ -647,6 +648,7 @@ std::vector<int> GameState::create_net_inputs()
 void GameState::print()
 {
   Coordinate coordinate;
+  int point;
   std::cout << "To play: " << to_play << std::endl;
   std::cout << "Ko point: ";
   ko.print();
@@ -655,7 +657,13 @@ void GameState::print()
     for (int col = 0; col < BOARD_SIZE; col++)
     {
       coordinate.set(col,row);
-      std::cout << get_point(coordinate);
+      point = get_point(coordinate);
+      if (point == 0)
+        std::cout << ".";
+      else if (point == 1)
+        std::cout << "x";
+      else if (point == 2)
+        std::cout << "o";
     }
     std::cout << std::endl;
   }
