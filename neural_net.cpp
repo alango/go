@@ -119,7 +119,7 @@ void NeuralNet::update_weights(std::vector<int> inputs, double target)
 void NeuralNet::read_weights_from_file()
 {
   std::ifstream weights_file;
-  weights_file.open("weights.txt");
+  weights_file.open("k40.txt");
   for (std::vector<Neuron>::iterator neuron = hidden_layer.begin();
        neuron != hidden_layer.end();
        neuron++)
@@ -143,7 +143,7 @@ void NeuralNet::read_weights_from_file()
 void NeuralNet::write_weights_to_file()
 {
   std::ofstream weights_file;
-  weights_file.open("weights.txt");
+  weights_file.open("k40.txt");
   for (std::vector<Neuron>::iterator neuron = hidden_layer.begin();
        neuron != hidden_layer.end();
        neuron++)
